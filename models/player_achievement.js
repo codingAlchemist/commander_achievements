@@ -1,9 +1,12 @@
 'use strict';
+
 const {
   Model,Sequelize, DataTypes
 } = require('sequelize');
+
 const Achievement = require('./achievement');
 const Player = require('./player');
+
 module.exports = (sequelize) => {
   class Player_Achievement extends Model {
     /**
