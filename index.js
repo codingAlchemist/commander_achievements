@@ -21,10 +21,7 @@ const cors=require('cors');
 /**
  * Construct the sequelize object and init the params
  */
-const sequelize = new Sequelize("mtgcommander_app", "tengence", "2515", {
-    host:'127.0.0.1',
-    dialect: "postgres"
-});
+const sequelize = new Sequelize(process.env.REMOTE);
 
 
 
@@ -44,15 +41,15 @@ sequelize
 
 const pool = new Pool({
     user: 'tengence',
-    host: 'localhost',
-    database: 'mtgcommander_app',
-    password: '2515',
-    port: 5432,
+    host: 'db-tengence.cvc6slu8aqwy.us-east-1.rds.amazonaws.com',
+    database: 'postgres',
+    password: 'AcTGUtZTD7RhPxceJzMN',
+    port: 5433,
 });
 
 pool.connect(err => {
     if (err) {
-        console.error('error connecting', err.stack());
+        console.error('error connecting', err.message);
     } else {
         console.log("connected");
     }
