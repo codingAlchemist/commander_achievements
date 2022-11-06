@@ -24,9 +24,12 @@ Player.init({
       autoIncrement: true
     },
     name: Sequelize.STRING,
+    password:Sequelize.STRING,
     nickname: Sequelize.STRING,
+    desc:Sequelize.STRING,
     level: Sequelize.INTEGER,
-    points: Sequelize.INTEGER
+    points: Sequelize.INTEGER,
+    email:Sequelize.STRING
   }, {
     sequelize,
     modelName: 'Player',

@@ -22,8 +22,8 @@ module.exports = (sequelize) => {
       allowNull: false,
       autoIncrement: true
     },
-    achievement: Sequelize.STRING,
-    description: Sequelize.STRING,
+    name: Sequelize.STRING,
+    desc: Sequelize.STRING,
     points: Sequelize.INTEGER
   }, {
     sequelize,

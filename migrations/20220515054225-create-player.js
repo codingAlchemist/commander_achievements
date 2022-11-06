@@ -8,9 +8,6 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      id: {
-        type: Sequelize.UUID
-      },
       name: {
         type: Sequelize.STRING
       },
@@ -22,6 +19,12 @@ module.exports = {
       },
       points: {
         type: Sequelize.INTEGER
+      },
+      email: {
+        type: Sequelize.STRING
+      },
+      desc: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
