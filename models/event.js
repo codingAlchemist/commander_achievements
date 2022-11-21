@@ -3,7 +3,7 @@ const {
   Model, Sequelize, BOOLEAN
 } = require('sequelize');
 const Store = require('./store');
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   class Event extends Model {
     /**
      * Helper method for defining associations.
