@@ -39,7 +39,7 @@ const create = async (req, res) => {
       }
 }
 
-const getAchievement = (req, res) => {
+const getAchievement = async (req, res) => {
     try {
         var player_achievement = await Player_Achievement.findAll({
           where: { player: req.params.id },
@@ -50,7 +50,7 @@ const getAchievement = (req, res) => {
         res.status(500).send({ error: "Something failed!" });
       }
 }
-const createPlayerAchievement = (req, res) => {
+const createPlayerAchievement = async (req, res) => {
 try {
     const player = await Player.findOne({
         where: { id: req.body.player },
