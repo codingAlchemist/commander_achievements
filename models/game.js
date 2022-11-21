@@ -29,10 +29,11 @@ module.exports = (sequelize) => {
     first: Sequelize.INTEGER,
     second: Sequelize.INTEGER,
     third: Sequelize.INTEGER,
-    fourth: Sequelize.INTEGER
+    fourth: Sequelize.INTEGER,
+    createdBy: Sequelize.INTEGER
   }, {
     sequelize,
-    modelName: 'Game',
+    modelName: 'Games',
   });
-  return game;
+  return Game;
 };

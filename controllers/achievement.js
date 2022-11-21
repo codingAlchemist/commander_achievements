@@ -88,7 +88,6 @@ const updateAchievement = async (req, res) => {
                 res.send("No achievement with that id");
             }
         })
-        
     }catch (error) {
         console.error(error.stack);
         res.status(500).send({ error: `Something failed! ${error.message}` });

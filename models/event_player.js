@@ -1,10 +1,10 @@
 'use strict';
 const {
-  Model
+  Model, Sequelize
 } = require('sequelize');
 const Event = require('./event');
 const Player = require('./player');
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   class Event_Player extends Model {
     /**
      * Helper method for defining associations.
@@ -13,12 +13,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Event_Player.hasOne(Event);
+      Event_Player.hasOne(Player);
     }
   }
   Event_Player.init({
-    id: DataTypes.INTEGER,
-    event: DataTypes.INTEGER,
-    event: DataTypes.INTEGER
+    id: Sequelize.INTEGER,
+    event: Sequelize.INTEGER,
+    player: Sequelize.INTEGER
   }, {
     sequelize,
     modelName: 'Event_Player',
