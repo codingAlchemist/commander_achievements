@@ -4,7 +4,7 @@ const {
 } = require('sequelize');
 const Player = require('./player');
 const Game = require('./game');
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   class Game_Player extends Model {
     /**
      * Helper method for defining associations.
@@ -25,7 +25,8 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true
     },
     player: Sequelize.INTEGER,
-    game: Sequelize.INTEGER
+    game: Sequelize.INTEGER,
+    won: Sequelize.BOOLEAN
   }, {
     sequelize,
     modelName: 'Game_Player',

@@ -27,7 +27,7 @@ module.exports = (sequelize) => {
     points: Sequelize.INTEGER
   }, {
     sequelize,
-    modelName: 'Achievement',
+    modelName: 'Achievements',
   });
   return Achievement;
 };

@@ -1,9 +1,9 @@
 'use strict';
 const {
-  Model
+  Model, Sequelize
 } = require('sequelize');
 const Player = require('./player');
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   class Game extends Model {
     /**
      * Helper method for defining associations.
@@ -22,17 +22,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true
     },
-    rounds: DataTypes.INTEGER,
-    time_elapsed: DataTypes.DATE,
-    date_played: DataTypes.DATE,
-    location: DataTypes.STRING,
-    first: DataTypes.INTEGER,
-    second: DataTypes.INTEGER,
-    third: DataTypes.INTEGER,
-    fourth: DataTypes.INTEGER
+    rounds: Sequelize.INTEGER,
+    time_elapsed: Sequelize.DATE,
+    date_played: Sequelize.DATE,
+    location: Sequelize.STRING,
+    first: Sequelize.INTEGER,
+    second: Sequelize.INTEGER,
+    third: Sequelize.INTEGER,
+    fourth: Sequelize.INTEGER
   }, {
     sequelize,
-    modelName: 'game',
+    modelName: 'Game',
   });
   return game;
 };

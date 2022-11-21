@@ -1,22 +1,43 @@
-require('dotenv').config()
+require("dotenv").config();
 
 module.exports = {
-    development: {
-        url: process.env.LOCAL,
-        dialect: 'postgres',
-        password:"2515",
-        username: "tengence"
-    },
-    test: {
-        url: process.env.TEST_DATABASE_URL,
-        dialect: 'postgres',
-        password:"2515",
-        username: "tengence"
-    },
-    production: {
-        url: process.env.DATABASE_URL,
-        dialect: 'postgres',
-        password:"2515",
-        username: "tengence"
-    },
-}
+  development: {
+    url: process.env.REMOTE,
+    dialect: "postgres",
+    password: process.env.PASSWORD,
+    username: process.env.USERNAME,
+    database: process.env.DBNAME,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    }
+  },
+  test: {
+    url: process.env.REMOTE,
+    dialect: "postgres",
+    password: process.env.PASSWORD,
+    username: process.env.USERNAME,
+    database: process.env.DBNAME,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    }
+  },
+  production: {
+    url: process.env.REMOTE,
+    dialect: "postgres",
+    password: process.env.PASSWORD,
+    username: process.env.USERNAME,
+    database: process.env.DBNAME,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    }
+  },
+};

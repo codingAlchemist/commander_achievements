@@ -1,24 +1,42 @@
 {
     "development": {
       "username": "tengence",
-      "password": "2515",
-      "database": "mtgcommander_app_dev",
-      "host": "127.0.0.1",
-      "dialect": "postgres"
+      "password": "AVNS_Z2mfs_wHWXe-RjKW33U",
+      "database": "mtgcommanderapp",
+      "host": "db-postgresql-nyc1-87431-do-user-1761452-0.b.db.ondigitalocean.com",
+      "dialect": "postgres",
+      "dialectOptions": {
+        "ssl": {
+          "rejectUnauthorized": false,
+          "require": true
+        }
+      }
     },
     "test": {
       "username": "tengence",
       "password": "2515",
       "database": "mtgcommander_app_test",
       "host": "127.0.0.1",
-      "dialect": "postgres"
+      "dialect": "postgres",
+      "dialectOptions": {
+        "ssl": {
+          "rejectUnauthorized": false,
+          "require": true
+        }
+      }
     },
     "production": {
       "username": "tengence",
       "password": "2515",
       "database": "mtgcommander_app_prod",
       "host": "127.0.0.1",
-      "dialect": "postgres"
+      "dialect": "postgres",
+      "dialectOptions": {
+        "ssl": {
+          "rejectUnauthorized": false,
+          "require": true
+        }
+      }
     }
   }
   

@@ -13,10 +13,10 @@ const envConfigs = require("./config/config");
 const achievement = require("./models/achievement");
 const req = require("express/lib/request");
 const player_achievement = require("./models/player_achievement");
-const router = express.Router();
 const config = envConfigs[env];
 const cors = require("cors");
 
+const achievementApi = require("./routes/achievement");
 /**
  * Construct the sequelize object and init the params
  */
@@ -39,6 +39,7 @@ const sequelize = new Sequelize({
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
+app.use("/achievements", require("./routes/achievement"));
 
 sequelize
   .authenticate()
@@ -57,48 +58,9 @@ sequelize.sync().then((err) => {
     res.send("Welcome to the commander achievements database!");
   });
 
-  // Mark: Achievements
-
-  //Find just one
-  app.get("/achievement/:id", async (req, res, next) => {
-    try {
-      Achievement.findAll({ where: { id: req.params.id } }).then(
-        (achievements) => {
-          if (!achievements) {
-            res.send("no achievements with that id.");
-          }
-          res.json(achievements);
-        }
-      );
-    } catch (err) {
-      console.error(err.stack);
-      res.status(500).send({ error: `Something failed! ${err.message}` });
-    }
-  });
-
-  app.delete("/achievement/delete/:id", async (req, res, next) => {
-      try{
-        Achievement.destroy({
-          where: {id: req.params.id}
-        });
-        res.status(200).json({"result":`${req.params.id} deleted successfully`});
-      } catch(err) {
-        console.error(err.stack);
-        res.status(500).send({ error: `Something failed! ${err.message}` });
-      }
-  });
+  
   
   //Get All
-  app.get("/achievement", async (req, res, next) => {
-    try {
-      await Achievement.findAll().then((achievements) => {
-        res.json(achievements);
-      });
-    } catch (err) {
-      console.error(err.stack);
-      res.status(500).send({ error: "Something failed!" });
-    }
-  });
 
   app.post("/achievement/create", async (req, res, next) => {
     try {
@@ -178,9 +140,7 @@ sequelize.sync().then((err) => {
     }
   });
 
-  app.put(
-    "/player/:playerid/achievement/:achievementid/complete",
-    async (req, res) => {
+  app.put("/player/:playerid/achievement/:achievementid/complete",async (req, res) => {
       try {
         const player_achievement = await Player_Achievement.findOne({
           where: {
