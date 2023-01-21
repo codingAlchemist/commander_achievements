@@ -1,0 +1,480 @@
+{
+    "tables": {
+        "Achievements": {
+            "tableName": "Achievements",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "name": {
+                    "field": "name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "desc": {
+                    "field": "desc",
+                    "seqType": "Sequelize.STRING"
+                },
+                "points": {
+                    "field": "points",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Events": {
+            "tableName": "Events",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "store": {
+                    "field": "store",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "event_code": {
+                    "field": "event_code",
+                    "seqType": "Sequelize.STRING"
+                },
+                "date": {
+                    "field": "date",
+                    "seqType": "Sequelize.DATE"
+                },
+                "completed": {
+                    "field": "completed",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Event_Players": {
+            "tableName": "Event_Players",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "event": {
+                    "field": "event",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "player": {
+                    "field": "player",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Games": {
+            "tableName": "Games",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "rounds": {
+                    "field": "rounds",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "time_elapsed": {
+                    "field": "time_elapsed",
+                    "seqType": "Sequelize.DATE"
+                },
+                "date_played": {
+                    "field": "date_played",
+                    "seqType": "Sequelize.DATE"
+                },
+                "location": {
+                    "field": "location",
+                    "seqType": "Sequelize.STRING"
+                },
+                "first": {
+                    "field": "first",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "second": {
+                    "field": "second",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "third": {
+                    "field": "third",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "fourth": {
+                    "field": "fourth",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdBy": {
+                    "field": "createdBy",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Game_Players": {
+            "tableName": "Game_Players",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "player": {
+                    "field": "player",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "game": {
+                    "field": "game",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "won": {
+                    "field": "won",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Players": {
+            "tableName": "Players",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "name": {
+                    "field": "name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "password": {
+                    "field": "password",
+                    "seqType": "Sequelize.STRING"
+                },
+                "nickname": {
+                    "field": "nickname",
+                    "seqType": "Sequelize.STRING"
+                },
+                "desc": {
+                    "field": "desc",
+                    "seqType": "Sequelize.STRING"
+                },
+                "level": {
+                    "field": "level",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "points": {
+                    "field": "points",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "email": {
+                    "field": "email",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Player_Achievements": {
+            "tableName": "Player_Achievements",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "player": {
+                    "field": "player",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "achievement": {
+                    "field": "achievement",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "completed": {
+                    "field": "completed",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Player_Rewards": {
+            "tableName": "Player_Rewards",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "player": {
+                    "field": "player",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "used": {
+                    "field": "used",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Rewards": {
+            "tableName": "Rewards",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "desc": {
+                    "field": "desc",
+                    "seqType": "Sequelize.STRING"
+                },
+                "times_can_use": {
+                    "field": "times_can_use",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "level_rewarded": {
+                    "field": "level_rewarded",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Stores": {
+            "tableName": "Stores",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "name": {
+                    "field": "name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "street": {
+                    "field": "street",
+                    "seqType": "Sequelize.STRING"
+                },
+                "city": {
+                    "field": "city",
+                    "seqType": "Sequelize.STRING"
+                },
+                "zip": {
+                    "field": "zip",
+                    "seqType": "Sequelize.STRING"
+                },
+                "state": {
+                    "field": "state",
+                    "seqType": "Sequelize.STRING"
+                },
+                "logo": {
+                    "field": "logo",
+                    "seqType": "Sequelize.STRING"
+                },
+                "store_number": {
+                    "field": "store_number",
+                    "seqType": "Sequelize.STRING"
+                },
+                "owner": {
+                    "field": "owner",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Store_Achievements": {
+            "tableName": "Store_Achievements",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "store": {
+                    "field": "store",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "achievement": {
+                    "field": "achievement",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "Store_Owners": {
+            "tableName": "Store_Owners",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "allowNull": false,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "name": {
+                    "field": "name",
+                    "seqType": "Sequelize.STRING"
+                },
+                "pass": {
+                    "field": "pass",
+                    "seqType": "Sequelize.STRING"
+                },
+                "approved": {
+                    "field": "approved",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        }
+    },
+    "path": "/Users/jasondebottis/Desktop/Projects/Commander_Achievements/migrations/_current.json",
+    "backupPath": "/Users/jasondebottis/Desktop/Projects/Commander_Achievements/migrations/_current_bak.json",
+    "exists": false,
+    "revision": 1
+}

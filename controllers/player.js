@@ -50,6 +50,7 @@ const getAchievement = async (req, res) => {
         res.status(500).send({ error: "Something failed!" });
       }
 }
+
 const createPlayerAchievement = async (req, res) => {
 try {
     const player = await Player.findOne({
@@ -137,7 +138,7 @@ const addPlayerToGame = async (req, res) => {
             }
         });
         const game = await Game.findOne({
-            where: { req.body.game }
+            where: { id: req.body.game }
         }).then( (game) => {
             if (!game){
                 const game = Game.build({
@@ -163,5 +164,6 @@ module.exports = {
     getAchievement,
     createPlayerAchievement,
     completeAchievement,
-    addPlayerToEvent
+    addPlayerToEvent,
+    addPlayerToGame
 }

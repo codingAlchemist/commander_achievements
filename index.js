@@ -10,13 +10,9 @@ const client = new Client();
 const Sequelize = require("sequelize");
 const env = process.env.NODE_ENV || "development";
 const envConfigs = require("./config/config");
-const achievement = require("./models/achievement");
-const req = require("express/lib/request");
-const player_achievement = require("./models/player_achievement");
+const cookieParser = require('cookie-parser')
 const config = envConfigs[env];
 const cors = require("cors");
-
-const achievementApi = require("./routes/achievement");
 /**
  * Construct the sequelize object and init the params
  */
@@ -38,8 +34,21 @@ const sequelize = new Sequelize({
 //Start using the body parser for the json objects that will be used later
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 app.use(cors());
+app.use(function (request, response, next) {
+  response.header("Access-Control-Allow-Origin", "*");
+  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  response.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  next();
+});
+
+//Routes
+
 app.use("/achievements", require("./routes/achievement"));
+app.use("/player", require("./routes/player"));
+app.use("/store", require('./routes/store'));
+app.use("/",require('./routes/email'));
 
 sequelize
   .authenticate()
@@ -50,9 +59,6 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
-const Achievement = require("./models/achievement")(sequelize);
-const Player = require("./models/player")(sequelize);
-const Player_Achievement = require("./models/player_achievement")(sequelize);
 sequelize.sync().then((err) => {
   app.get("/test", (req, res, next) => {
     res.send("Welcome to the commander achievements database!");

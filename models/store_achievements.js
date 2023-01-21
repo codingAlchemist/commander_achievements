@@ -1,12 +1,12 @@
 'use strict';
 const {
-  Model
+  Model, Sequelize
 } = require('sequelize');
 
 const Store = require('./store');
 const Achievement = require('./achievement');
 
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   class Store_Achievements extends Model {
     /**
      * Helper method for defining associations.
@@ -15,13 +15,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Store_Achievements.hasOne(Store);
-      Store_Achievements.hasOne(Achievement);
     }
   }
   Store_Achievements.init({
-    store: DataTypes.INTEGER,
-    achievement: DataTypes.INTEGER
+    store: Sequelize.INTEGER,
+    achievement: Sequelize.INTEGER
   }, {
     sequelize,
     modelName: 'Store_Achievements',

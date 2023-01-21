@@ -13,6 +13,7 @@ const sequelize = new Sequelize({
       }
     },
   });
+
 const Achievement = require("../models/achievement")(sequelize);
 
 const getAllAchievements = async (req, res) => {
@@ -43,7 +44,7 @@ const getAchievement = async (req, res) => {
 }
 const deleteAchievement = async (req, res) => {
     try{
-        Achievement.destroy({
+        await Achievement.destroy({
           where: {id: req.params.id}
         });
         res.status(200).json({"result":`${req.params.id} deleted successfully`});
@@ -71,7 +72,7 @@ const createAchievement = async (req, res) => {
 
 const updateAchievement = async (req, res) => {
     try {
-        const achievement = await Achievement.findOne({
+        await Achievement.findOne({
             where: {
                 id: req.params.id
             }
@@ -82,8 +83,8 @@ const updateAchievement = async (req, res) => {
                     desc: req.body.desc,
                     points: req.body.points
                 })
-                res.status(200).json(achievement);
                 achievement.save();
+                res.status(200).json(achievement);
             }else{
                 res.send("No achievement with that id");
             }

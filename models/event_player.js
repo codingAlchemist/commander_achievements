@@ -13,14 +13,17 @@ module.exports = (sequelize) => {
      */
     static associate(models) {
       // define association here
-      Event_Player.hasOne(Event);
-      Event_Player.hasOne(Player);
     }
   }
   Event_Player.init({
-    id: Sequelize.INTEGER,
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true
+    },
     event: Sequelize.INTEGER,
-    player: Sequelize.INTEGER
+    player: Sequelize.INTEGER,
   }, {
     sequelize,
     modelName: 'Event_Player',

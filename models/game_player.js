@@ -13,8 +13,6 @@ module.exports = (sequelize) => {
      */
     static associate(models) {
       // define association here
-      Game_Player.hasOne(Game);
-      Game_Player.hasOne(Player);
     }
   }
   Game_Player.init({

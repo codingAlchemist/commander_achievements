@@ -15,8 +15,6 @@ module.exports = (sequelize) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Player_Achievement.hasOne(Player);
-      Player_Achievement.hasOne(Achievement);
     }
   }
   Player_Achievement.init({

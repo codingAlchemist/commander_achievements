@@ -1,10 +1,10 @@
 'use strict';
 const {
-  Model
+  Model, Sequelize
 } = require('sequelize');
 const Reward = require('./reward');
 const Player = require('./player');
-module.exports = (sequelize, DataTypes) => {
+module.exports = (sequelize) => {
   class Player_Reward extends Model {
     /**
      * Helper method for defining associations.
@@ -13,14 +13,17 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Player_Reward.hasOne(Player);
-      Player_Reward.hasOne(Reward);
     }
   }
   Player_Reward.init({
-    id: DataTypes.INTEGER,
-    player: DataTypes.INTEGER,
-    used: DataTypes.BOOLEAN
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true
+    },
+    player: Sequelize.INTEGER,
+    used: Sequelize.BOOLEAN
   }, {
     sequelize,
     modelName: 'Player_Reward',
