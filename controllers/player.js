@@ -20,7 +20,6 @@ const Event_Player = require('../models/event_player')(sequelize);
 const Event = require('../models/event')(sequelize);
 const Game_Player = require('../models/game_player')(sequelize);
 const Game = require('../models/game')(sequelize);
-
 const create = async (req, res) => {
     try {
         const player = await Player.build({

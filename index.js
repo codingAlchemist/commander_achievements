@@ -48,6 +48,7 @@ app.use(function (request, response, next) {
 app.use("/achievements", require("./routes/achievement"));
 app.use("/player", require("./routes/player"));
 app.use("/store", require('./routes/store'));
+app.use("/user", require('./routes/user'));
 app.use("/",require('./routes/email'));
 
 sequelize
