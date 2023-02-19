@@ -1,10 +1,9 @@
 'use strict';
 const {
-  Model, Sequelize, BOOLEAN
+  Model
 } = require('sequelize');
-const Store = require('./store');
-module.exports = (sequelize) => {
-  class Event extends Model {
+module.exports = (sequelize, DataTypes) => {
+  class User_Role extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -14,21 +13,17 @@ module.exports = (sequelize) => {
       // define association here
     }
   }
-  
-  Event.init({
+  User_Role.init({
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
       allowNull: false,
       autoIncrement: true
     },
-    store: Sequelize.INTEGER,
-    event_code: Sequelize.STRING,
-    date: Sequelize.DATE,
-    completed: Sequelize.BOOLEAN
+    name: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'Event',
+    modelName: 'User_Role',
   });
-  return Event;
+  return User_Role;
 };

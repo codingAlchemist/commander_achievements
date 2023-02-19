@@ -1,5 +1,7 @@
+const cookieParser = require('cookie-parser');
 const { where } = require("sequelize");
 const Sequelize = require("sequelize");
+const fileUpload = require("express-fileupload");
 const sequelize = new Sequelize({
   database: process.env.DBNAME,
   username: process.env.USERNAME,
@@ -17,6 +19,7 @@ const sequelize = new Sequelize({
 
 const Store = require('../models/store')(sequelize);
 const Store_Owner = require("../models/store_owner")(sequelize);
+const User = require("../models/users");
 
 const getAllOwners = async (req, res) => {
     try {
@@ -32,27 +35,48 @@ const getAllOwners = async (req, res) => {
 const createOwner = async (req, res) => {
     try{
         var owner = Store_Owner.build({
-            name: req.body.name,
+            username: req.body.username,
             pass: req.body.pass,
             email: req.body.email,
             approved: 0
         });
         await owner.save();
+        res.cookie("owner",owner.id, {
+            maxAge: 5000,
+            expires: new Date('02-08-2023')
+          });
         res.status(200).json(owner);
     }catch (error) {
         console.error(error.stack);
         res.status(500).send({ error: `Something failed! ${error.message}` });
     }
 }
-const getOwner = (req, res) => {
+
+const getOwnerById = async (req, res) => {
+    try{
+        Store_Owner.findOne({
+            where: {
+                id: req.params.id
+            }
+        }).then((owner) => {
+            res.status(200).json(owner);
+        })
+    } catch(error){
+        console.error(error.stack);
+        res.status(500).send({ error: `Something failed! ${error.message}` });
+    }
+}
+const loginOwner = (req, res) => {
     try {
         Store_Owner.findOne({
             where: {
-                name: req.query.name,
-                pass: req.query.pass
+                username: req.body.username,
+                pass: req.body.pass
             }
         }).then ((owner) => {
+            res.cookie("owner", owner.id);
             res.status(200).json(owner)
+
         })
     } catch (error) {
         console.error(error.stack);
@@ -80,7 +104,7 @@ const createStore = async (req, res) => {
     try{
         await Store_Owner.findOne({
             where: {
-                id: req.body.owner
+                id: req.cookies.owner
             }
         }).then( (owner) => {
             if (!owner){
@@ -88,9 +112,10 @@ const createStore = async (req, res) => {
                 res.status(500).send({ error: `Something failed! no store owners found` });
             }
             var store = Store.build({
-                name: req.body.store,
+                name: req.body.name,
                 street: req.body.street,
                 city: req.body.city,
+                state: req.body.state,
                 zip: req.body.zip,
                 owner: owner.id
             });
@@ -107,7 +132,7 @@ const getStoresByOwner = async (req, res) => {
     try {
         await Store.findAll({
             where: {
-                id: req.query.owner
+                owner: req.params.owner
             }
         }).then((stores) => {
             res.status(200).json(stores);
@@ -162,7 +187,8 @@ const deleteStore = async(req, res) => {
 module.exports = {
     createOwner,
     updateOwner,
-    getOwner,
+    getOwnerById,
+    loginOwner,
     createStore,
     getStoresByOwner,
     updateStore,

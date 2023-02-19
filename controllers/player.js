@@ -20,10 +20,11 @@ const Event_Player = require('../models/event_player')(sequelize);
 const Event = require('../models/event')(sequelize);
 const Game_Player = require('../models/game_player')(sequelize);
 const Game = require('../models/game')(sequelize);
+
 const create = async (req, res) => {
     try {
         const player = await Player.build({
-          name: req.body.name,
+          username: req.body.username,
           email: req.body.email,
           nickname: req.body.nickname,
           level: req.body.level,
@@ -33,6 +34,21 @@ const create = async (req, res) => {
         await player.save();
         res.status(200).json(player);
       } catch (err) {
+        console.error(err.stack);
+        res.status(500).send({ error: "Something failed!" });
+      }
+}
+const getPlayer = async (req, res) => {
+    try {
+        await Player.findOne({
+            where: {
+                username: req.body.username,
+                pass: req.body.pass
+            }
+        }).then((player) => {
+            res.status(200).json(player);
+        })
+    } catch (err) {
         console.error(err.stack);
         res.status(500).send({ error: "Something failed!" });
       }
@@ -164,5 +180,6 @@ module.exports = {
     createPlayerAchievement,
     completeAchievement,
     addPlayerToEvent,
-    addPlayerToGame
+    addPlayerToGame,
+    getPlayer
 }

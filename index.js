@@ -44,13 +44,6 @@ app.use(function (request, response, next) {
 });
 
 //Routes
-
-app.use("/achievements", require("./routes/achievement"));
-app.use("/player", require("./routes/player"));
-app.use("/store", require('./routes/store'));
-app.use("/user", require('./routes/user'));
-app.use("/",require('./routes/email'));
-
 sequelize
   .authenticate()
   .then(() => {
@@ -61,8 +54,18 @@ sequelize
   });
 
 sequelize.sync().then((err) => {
+  app.use("/achievements", require("./routes/achievement"));
+  app.use("/player", require("./routes/player"));
+  app.use("/store", require('./routes/store'));
+  app.use("/user", require('./routes/user'));
+  app.use("/event", require('./routes/event'));
+  app.use("/",require('./routes/email'));
+
   app.get("/test", (req, res, next) => {
     res.send("Welcome to the commander achievements database!");
   });
 });
+
+
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
