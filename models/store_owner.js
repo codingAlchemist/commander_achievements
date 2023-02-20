@@ -21,6 +21,8 @@ module.exports = (sequelize) => {
       autoIncrement: true
     },
     username: Sequelize.STRING,
+    firstname: Sequelize.STRING,
+    lastname: Sequelize.STRING,
     pass: Sequelize.STRING,
     email: Sequelize.STRING,
     approved: Sequelize.BOOLEAN

@@ -36,6 +36,8 @@ const createOwner = async (req, res) => {
     try{
         var owner = Store_Owner.build({
             username: req.body.username,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
             pass: req.body.pass,
             email: req.body.email,
             approved: 0
@@ -86,7 +88,9 @@ const loginOwner = (req, res) => {
 const updateOwner = async (req, res) => {
     try {
         await Store_Owner.update({
-            name: req.body.name,
+            username: req.body.username,
+            firstname: req.body.firstname,
+            lastname: req.body.lastname,
             pass: req.body.pass,
             approved: req.body.approved
         }, {
@@ -102,25 +106,17 @@ const updateOwner = async (req, res) => {
 
 const createStore = async (req, res) => {
     try{
-        await Store_Owner.findOne({
-            where: {
-                id: req.cookies.owner
-            }
-        }).then( (owner) => {
-            if (!owner){
-                console.error(err.stack);
-                res.status(500).send({ error: `Something failed! no store owners found` });
-            }
-            var store = Store.build({
-                name: req.body.name,
-                street: req.body.street,
-                city: req.body.city,
-                state: req.body.state,
-                zip: req.body.zip,
-                owner: owner.id
-            });
-            store.save();
+        var store = await Store.build({
+            name: req.body.name,
+            street: req.body.street,
+            city: req.body.city,
+            state: req.body.state,
+            zip: req.body.zip,
+            logo: req.body.logo,
+            store_number: req.body.store_number,
+            owner: req.body.ownerId
         });
+        await store.save();
         res.status(200).json(store);
     }catch(error){
         console.error(error.stack);
