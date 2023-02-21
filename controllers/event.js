@@ -22,7 +22,11 @@ const Event = require('../models/event')(sequelize);
 
 const create =  async (req, res) => {
   try{
-    var event_code = makeId(5);
+    var event_code = req.body.event_code;
+    if (event_code == "" || event_code == null) {
+      event_code = makeId(5);
+    } 
+    
     const event = await Event.build({
       store: req.body.store_number,
       date: new Date(),
