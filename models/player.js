@@ -23,13 +23,16 @@ Player.init({
       allowNull: false,
       autoIncrement: true
     },
-    name: Sequelize.STRING,
+    username: Sequelize.STRING,
     password:Sequelize.STRING,
     nickname: Sequelize.STRING,
     desc:Sequelize.STRING,
     level: Sequelize.INTEGER,
     points: Sequelize.INTEGER,
-    email:Sequelize.STRING
+    email:Sequelize.STRING,
+    event_code: Sequelize.STRING,
+    game_code: Sequelize.STRING,
+    isEventApproved: Sequelize.BOOLEAN
   }, {
     sequelize,
     modelName: 'Player',

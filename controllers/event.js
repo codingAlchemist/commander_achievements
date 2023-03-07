@@ -22,19 +22,30 @@ const Event = require('../models/event')(sequelize);
 
 const create =  async (req, res) => {
   try{
-    var event_code = req.body.event_code;
-    if (event_code == "" || event_code == null) {
-      event_code = makeId(5);
-    } 
-    
-    const event = await Event.build({
-      store: req.body.store_number,
-      date: new Date(),
-      completed: false,
-      event_code: event_code
-    });
-    await event.save();
-    res.status(200).json(event);
+    await Event.findOne({
+      where:{
+        event_code: req.body.event_code
+      }
+    }).then((event) => {
+      if (event != null) {
+        console.log("event is not null")
+        res.json({"message":"Event code already in use."});
+      }else{
+        var event_code = req.body.event_code;
+
+        if (event_code == "" || event_code == null) {
+          event_code = makeId(5);
+        } 
+        const event = Event.build({
+          store: req.body.store_number,
+          date: new Date(),
+          completed: false,
+          event_code: req.body.event_code
+        });
+        event.save();
+        res.status(200).json(event);
+      }
+    })
   }catch(error){
     console.error(error.stack);
     res.status(500).send({ error: "Something failed while trying to create event!" + error.message });
