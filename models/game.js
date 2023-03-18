@@ -22,14 +22,17 @@ module.exports = (sequelize) => {
       autoIncrement: true
     },
     rounds: Sequelize.INTEGER,
-    time_elapsed: Sequelize.DATE,
+    time_ended: Sequelize.DATE,
+    time_started: Sequelize.DATE,
     date_played: Sequelize.DATE,
-    location: Sequelize.STRING,
-    first: Sequelize.INTEGER,
-    second: Sequelize.INTEGER,
-    third: Sequelize.INTEGER,
-    fourth: Sequelize.INTEGER,
-    createdBy: Sequelize.INTEGER
+    event_code: Sequelize.STRING,
+    game_code: Sequelize.STRING,
+    player1: Sequelize.INTEGER,
+    player2: Sequelize.INTEGER,
+    player3: Sequelize.INTEGER,
+    player4: Sequelize.INTEGER,
+    winner: Sequelize.INTEGER,
+    looking_for_players: Sequelize.BOOLEAN
   }, {
     sequelize,
     modelName: 'Games',

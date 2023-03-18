@@ -1,6 +1,8 @@
 const express = require("express");
 const cookieParser = require('cookie-parser')
 const Sequelize = require("sequelize");
+const { Op } = require("sequelize");
+
 const sequelize = new Sequelize({
   database: process.env.DBNAME,
   username: process.env.USERNAME,
@@ -52,6 +54,35 @@ const create =  async (req, res) => {
   }
 }
 
+const getAllEventsByStore = async (req, res) => {
+  try {
+    await Event.findAll({
+      where: {
+        store: req.params.store_number
+      }
+    }).then((events) => {
+      res.status(200).json(events);
+    })
+  } catch(error) {
+    console.error(error.stack);
+    res.status(500).send({ error: "Something failed while trying to create event!" + error.message });
+  }
+}
+
+const getAllEventsByCode = async (req, res) => {
+  try {
+    await Event.findAll({
+      where: {
+        event_code: req.params.event_code
+      }
+    }).then((events) => {
+      res.status(200).json(events);
+    })
+  } catch(error) {
+    console.error(error.stack);
+    res.status(500).send({ error: "Something failed while trying to create event!" + error.message });
+  }
+}
 const makeId = (length) => {
     let result = '';
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -64,5 +95,7 @@ const makeId = (length) => {
     return result;
 }
 module.exports = {
-  create
+  create,
+  getAllEventsByStore,
+  getAllEventsByCode
 }

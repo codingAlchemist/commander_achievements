@@ -17,9 +17,7 @@ const sequelize = new Sequelize({
 
 const Player = require("../models/player")(sequelize);
 const Player_Achievement = require("../models/player_achievement")(sequelize);
-const Event_Player = require("../models/event_player")(sequelize);
 const Event = require("../models/event")(sequelize);
-const Game_Player = require("../models/game_player")(sequelize);
 const Game = require("../models/game")(sequelize);
 
 const create = async (req, res) => {
@@ -145,6 +143,23 @@ const getAllPlayers = async (req, res) => {
   }
 };
 
+const getAllPlayersInEvent = async (req, res) => {
+  try {
+    await Player.findAll({
+      where: 
+      { 
+        event_code: req.params.event_code,
+        isEventApproved: req.query.approved 
+      },
+    }).then((players) => {
+      res.status(200).json(players);
+    });
+  } catch (error) {
+    console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
+  }
+};
+
 const addPlayerToEvent = async (req, res) => {
   try {
     await Player.findOne({
@@ -169,6 +184,7 @@ const addPlayerToEvent = async (req, res) => {
               Player.update(
                 {
                   event_code: req.body.event_code,
+                  isEventApproved: false
                 },
                 {
                   where: {
@@ -178,7 +194,7 @@ const addPlayerToEvent = async (req, res) => {
               ).then((player) => {
                 res
                   .status(200)
-                  .send({ message: `${player.nickname} added to the event` }); //We found event and player add to event
+                  .send({ message: `Player added to the event` }); //We found event and player add to event
               });
             }
           });
@@ -193,65 +209,137 @@ const addPlayerToEvent = async (req, res) => {
 
 const approvePlayerForEvent = async (req, res) => {
   try {
-    await Player.update({
-        isEventApproved: true
-    }, {
+    await Player.update(
+      {
+        isEventApproved: true,
+      },
+      {
         where: {
-            id: req.params.id
-        }
-    }).then((player) => {
-        res.status(200).send({message: "Player has been approved."});
-    })
+          id: req.params.id,
+        },
+      }
+    ).then((player) => {
+      res.status(200).send({ message: "Player has been approved." });
+    });
   } catch (error) {
     console.error(error.stack);
     res.status(500).send({ error: `Something failed! ${error.message}` });
   }
 };
 
-const addPlayerToGame = async (req, res) => {
-  try {
-    await Player.findOne({
-      where: { id: req.body.id },
-    }).then((player) => {
-      if (!player) {
-        res.send("No players exist with that id or player not sent"); //We did not find a player
-      } else {
-        Game.findOne({
-          where: {
-            game_code: req.body.game_code,
-          },
-        }).then((game) => {
-          if (game == null) {
-            res
-              .status(200)
-              .send({ message: `A game does exist with that game code` }); // We did not find the game
-          } else {
-            if (player.game_code != null) {
-              res.json({ message: "Player already in a game" }); // Player was already in a game
-            } else {
-              Player.update(
-                {
-                  game_code: req.body.game_code,
-                },
-                {
-                  where: {
-                    id: req.params.id,
-                  },
-                }
-              ).then((player) => {
-                res
-                  .status(200)
-                  .send({ message: `${player.nickname} added to the game` }); // Player was not in a game and the game was found
-              });
-            }
-          }
-        });
-      }
+const createGame = async (req, res) => {
+  try{
+    const game = await Game.build({
+      date_played: new Date(),
+      event_code: req.body.event_code,
+      player1: req.body.player1,
+      game_code: req.body.game_code
     });
+    await game.save();
+    res.status(200).json(game);
+  }catch(error){
+    console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
+  }
+}
+
+const removePlayerFromGame = async (req, res) => {
+  try {
+    Player.findOne({
+      where:{id: req.params.id}
+    }).then((player) => {
+      Player.update({
+        game_code: null
+      },{
+        where:{id: req.params.id}
+      })
+    })
   } catch (error) {
     console.error(error.stack);
     res.status(500).send({ error: `Something failed! ${error.message}` });
   }
+}
+
+const endGame = async (req, res) => {
+  try {
+    Game.findOne({
+      where: {game_code: req.body.game_code}
+    }).then((game) => {
+      Game.update({
+        winner: req.body.winner,
+        time_ended: new Date()
+      },{
+        where: {game_code: req.body.game_code}
+      }).res.status(200);
+    })
+  } catch (error) {
+    console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
+  }
+}
+const addPlayerToGame = async (req, res) => {
+    try {
+      await Player.findOne({
+        where: {id: req.params.id}
+      }).then((player) => {
+        if(!player){
+          res.send("Player not found")
+        }
+        if(player.game_code.length > 0 || player.game_code != null) {
+          res.send("Player seems to be still in a game");
+        }
+        Player.update({
+          game_code: req.body.game_code
+        }, {
+          where: {
+            id: req.params.id
+          }
+        })
+
+      });
+    } catch (error) {
+      console.error(error.stack);
+      res.status(500).send({ error: `Something failed! ${error.message}` });
+    }
+    try {
+      Game.findOne({
+        where:{game_code: req.body.game_code}
+      }).then((game) => {
+        if(!game) {
+          res.send("Game does not exist")
+        }
+        if (game.player2 == null){
+          Game.update({
+            player2: req.body.player
+          },{
+            where: {game_code: req.body.game_code}
+          })
+        } else if (player3 == null) {
+          Game.update({
+            player3: req.body.player
+          },{
+            where: {game_code: req.body.game_code}
+          })
+        } else if (player4 == null) {
+          Game.update({
+            player4: req.body.player
+          },{
+            where: {game_code: req.body.game_code}
+          })
+        }
+        if(game.player1 != null && game.player2 != null && game.player3 != null && game.player4 != null){
+          Game.update({
+            looking_for_players: false,
+            time_started: new Date()
+          }, {
+            where: {game_code: req.body.game_code}
+          })
+        }
+      })
+    } catch (error) {
+      console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
+    }
 };
 
 module.exports = {
@@ -263,5 +351,9 @@ module.exports = {
   addPlayerToGame,
   getPlayer,
   getAllPlayers,
-  approvePlayerForEvent
+  approvePlayerForEvent,
+  getAllPlayersInEvent,
+  createGame,
+  removePlayerFromGame,
+  endGame
 };
