@@ -30,12 +30,15 @@ Player.init({
     level: Sequelize.INTEGER,
     points: Sequelize.INTEGER,
     email:Sequelize.STRING,
-    event_code: Sequelize.STRING,
-    game_code: Sequelize.STRING,
+    game_id: Sequelize.INTEGER,
+    event_id: Sequelize.INTEGER,
+    achievement1: Sequelize.INTEGER,
+    achievement2: Sequelize.INTEGER,
+    achievement3: Sequelize.INTEGER,
     isEventApproved: Sequelize.BOOLEAN
   }, {
     sequelize,
-    modelName: 'Player',
+    modelName: 'Players',
   });
   return Player;
 };

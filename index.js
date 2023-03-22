@@ -60,7 +60,8 @@ sequelize.sync().then((err) => {
   app.use("/user", require('./routes/user'));
   app.use("/event", require('./routes/event'));
   app.use("/",require('./routes/email'));
-
+  app.use("/games", require('./routes/games'));
+  
   app.get("/test", (req, res, next) => {
     res.send("Welcome to the commander achievements database!");
   });

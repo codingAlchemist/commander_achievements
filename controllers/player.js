@@ -37,6 +37,18 @@ const create = async (req, res) => {
     res.status(500).send({ error: "Something failed!" });
   }
 };
+const getPlayerById = async (req, res) => {
+  try {
+    Player.findOne({
+      where: {id: req.params.id}
+    }).then((player) => {
+      res.status(200).json(player);
+    })
+  } catch (error) {
+    console.error(error.stack);
+    res.status(500).send({ error: "Something failed!" });
+  }
+}
 
 const getPlayer = async (req, res) => {
   try {
@@ -66,10 +78,16 @@ const getAchievement = async (req, res) => {
   }
 };
 
-const createPlayerAchievement = async (req, res) => {
+createPlayerAchievement = async (id) => {
   try {
+    var total = 0
+    //var achievement = []
+    await Achievement.findAll().then((results) => {
+      total = results.length
+    })
+    
     const player = await Player.findOne({
-      where: { id: req.body.player },
+      where: { id: id },
     }).then((player) => {
       if (!player) {
         res.send("No players exist with that id or player not sent");
@@ -277,65 +295,26 @@ const endGame = async (req, res) => {
     res.status(500).send({ error: `Something failed! ${error.message}` });
   }
 }
+
 const addPlayerToGame = async (req, res) => {
     try {
-      await Player.findOne({
-        where: {id: req.params.id}
-      }).then((player) => {
-        if(!player){
-          res.send("Player not found")
-        }
-        if(player.game_code.length > 0 || player.game_code != null) {
-          res.send("Player seems to be still in a game");
-        }
-        Player.update({
-          game_code: req.body.game_code
-        }, {
-          where: {
-            id: req.params.id
-          }
-        })
-
-      });
-    } catch (error) {
-      console.error(error.stack);
-      res.status(500).send({ error: `Something failed! ${error.message}` });
-    }
-    try {
-      Game.findOne({
-        where:{game_code: req.body.game_code}
-      }).then((game) => {
-        if(!game) {
-          res.send("Game does not exist")
-        }
-        if (game.player2 == null){
-          Game.update({
-            player2: req.body.player
-          },{
-            where: {game_code: req.body.game_code}
-          })
-        } else if (player3 == null) {
-          Game.update({
-            player3: req.body.player
-          },{
-            where: {game_code: req.body.game_code}
-          })
-        } else if (player4 == null) {
-          Game.update({
-            player4: req.body.player
-          },{
-            where: {game_code: req.body.game_code}
-          })
-        }
-        if(game.player1 != null && game.player2 != null && game.player3 != null && game.player4 != null){
-          Game.update({
-            looking_for_players: false,
-            time_started: new Date()
-          }, {
-            where: {game_code: req.body.game_code}
-          })
-        }
+      const game = await Game.findOne({
+        where: {game_code: req.params.game_code}
       })
+      Player.findOne({
+        where: {id: req.body.id}
+      }).then((player) => {
+         Player.update({
+            game_id: game.id
+         },{
+           where: {
+             id: req.body.id
+           }
+         }).then((player) => {
+            res.status(200).json({message: "Player added to game"});
+         })
+      })
+      
     } catch (error) {
       console.error(error.stack);
     res.status(500).send({ error: `Something failed! ${error.message}` });
@@ -345,11 +324,11 @@ const addPlayerToGame = async (req, res) => {
 module.exports = {
   create,
   getAchievement,
-  createPlayerAchievement,
   completeAchievement,
   addPlayerToEvent,
   addPlayerToGame,
   getPlayer,
+  getPlayerById,
   getAllPlayers,
   approvePlayerForEvent,
   getAllPlayersInEvent,
