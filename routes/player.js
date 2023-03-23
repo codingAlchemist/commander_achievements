@@ -11,9 +11,11 @@ app.put('/:game_code/game/add', controller.addPlayerToGame);
 app.put('/:id/event/approve', controller.approvePlayerForEvent);
 app.put("/:id/game/remove", controller.removePlayerFromGame)
 app.put("/game/finish", controller.endGame);
+app.put("/achievements/assign", controller.createPlayerAchievements)
 
-app.get("/players", controller.getAllPlayers);
-app.get("/:event_code/players",controller.getAllPlayersInEvent);
+app.get("/:id/achievements", controller.getPlayerAchievements);
+app.get("/", controller.getAllPlayers);
+app.get("/event/:event_code",controller.getAllPlayersInEvent);
 app.get("/:id",controller.getPlayerById)
 
 module.exports = app;

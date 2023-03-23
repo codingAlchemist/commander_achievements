@@ -15,6 +15,7 @@ const sequelize = new Sequelize({
   },
 });
 
+const Achievement = require("../models/achievement")(sequelize);
 const Player = require("../models/player")(sequelize);
 const Player_Achievement = require("../models/player_achievement")(sequelize);
 const Event = require("../models/event")(sequelize);
@@ -77,39 +78,67 @@ const getAchievement = async (req, res) => {
     res.status(500).send({ error: "Something failed!" });
   }
 };
-
-createPlayerAchievement = async (id) => {
+const getPlayerAchievements = async (req, res) => {
   try {
-    var total = 0
-    //var achievement = []
-    await Achievement.findAll().then((results) => {
-      total = results.length
-    })
-    
-    const player = await Player.findOne({
-      where: { id: id },
-    }).then((player) => {
-      if (!player) {
-        res.send("No players exist with that id or player not sent");
-      }
-    });
-    const achievement = await Achievement.findOne({
-      where: { id: req.body.achievement },
+    Achievement.hasMany(Player_Achievement, {foreignKey: 'achievement_id'});
+    Player_Achievement.belongsTo(Achievement, {foreignKey: 'achievement_id'});
+
+    Player_Achievement.findAll({
+      where:{
+        player_id: req.params.id
+      },
+      attributes:{
+        exclude: [
+          "id",
+          "createdAt",
+          "updatedAt",
+          "player_id",
+          "achievement_id"
+        ],
+      },
+      include:[{model: Achievement, attributes: ['name', 'desc', 'points']}]
     }).then((result) => {
-      if (!result) {
-        res.send("No achievements exist with that id or achievement not sent");
-      }
+      res.status(200).json(result)
+    })
+  } catch (error) {
+    console.error(err.stack);
+    res.status(500).send({ error: `Something failed! ${err.message}`});
+  }
+}
+const createPlayerAchievements = async (req, res) => {
+  try {
+    var achievements = []
+    for (var i=0; i<3;i++){
+      const achievement = await Achievement.findOne({
+        order: sequelize.random()        
+      }).then((result) => {
+        if (!result) {
+          res.send("No achievements exist with that id or achievement not sent");
+        }else{
+          const player_achievement = Player_Achievement.build({
+            player_id: req.body.player,
+            achievement: result.id,
+            completed: false,
+          });
+          player_achievement.save();
+          achievements.push(player_achievement);
+        }
+      });
+      
+    }
+    Player.hasMany(Player_Achievement, {foreignKey: 'player_id'});
+    Player_Achievement.belongsTo(Player, {foreignKey: 'player_id'})
+    Player.findAll({
+      where: {
+        id: req.body.player
+      },
+      include:[Player_Achievement],
+    }).then((players) => {
+      res.status(200).json(players);
     });
-    const player_achievement = await Player_Achievement.build({
-      player: player.id,
-      achievement: achievement.id,
-      completed: false,
-    });
-    await player_achievement.save();
-    res.status(200).json(player_achievement);
   } catch (err) {
     console.error(err.stack);
-    res.status(500).send({ error: "Something failed!" });
+    res.status(500).send({ error: `Something failed! ${err.message}`  });
   }
 };
 
@@ -163,14 +192,15 @@ const getAllPlayers = async (req, res) => {
 
 const getAllPlayersInEvent = async (req, res) => {
   try {
-    await Player.findAll({
-      where: 
-      { 
-        event_code: req.params.event_code,
-        isEventApproved: req.query.approved 
+    Event.hasMany(Player, { foreignKey: 'event_id'});
+    Player.belongsTo(Event, {foreignKey: 'event_id'});
+    await Event.findAll({
+      where: {
+        event_code: req.params.event_code
       },
-    }).then((players) => {
-      res.status(200).json(players);
+      include:[{model: Player, attributes:["isEventApproved", "nickname"]}]
+    }).then((result) => {
+      res.status(200).json(result)
     });
   } catch (error) {
     console.error(error.stack);
@@ -201,7 +231,7 @@ const addPlayerToEvent = async (req, res) => {
             } else {
               Player.update(
                 {
-                  event_code: req.body.event_code,
+                  event_id: event.id,
                   isEventApproved: false
                 },
                 {
@@ -334,5 +364,7 @@ module.exports = {
   getAllPlayersInEvent,
   createGame,
   removePlayerFromGame,
+  createPlayerAchievements,
+  getPlayerAchievements,
   endGame
 };

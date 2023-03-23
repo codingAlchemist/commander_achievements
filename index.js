@@ -55,10 +55,10 @@ sequelize
 
 sequelize.sync().then((err) => {
   app.use("/achievements", require("./routes/achievement"));
-  app.use("/player", require("./routes/player"));
-  app.use("/store", require('./routes/store'));
-  app.use("/user", require('./routes/user'));
-  app.use("/event", require('./routes/event'));
+  app.use("/players", require("./routes/player"));
+  app.use("/stores", require('./routes/store'));
+  app.use("/users", require('./routes/user'));
+  app.use("/events", require('./routes/event'));
   app.use("/",require('./routes/email'));
   app.use("/games", require('./routes/games'));
   

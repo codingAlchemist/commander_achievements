@@ -17,7 +17,7 @@ const sequelize = new Sequelize({
 const Game = require("../models/game")(sequelize);
 const Player = require("../models/player")(sequelize);
 
-const getAllGames = async (req, res) => {
+const getAllPlayersForGame = async (req, res) => {
   try {
     Game.hasMany(Player, { foreignKey: "game_id" });
     Player.belongsTo(Game, { foreignKey: "game_id" });
@@ -44,9 +44,25 @@ const getAllGames = async (req, res) => {
     }).then((games) => {
       res.status(200).json(games);
     });
-  } catch (error) {}
+  } catch (error) {
+    console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
+  }
 };
-
+const getAllGames = (req, res) => {
+  try {
+    Game.findAll({
+      where:{
+        event_id: req.params.event_id
+      }
+    }).then((games) => {
+      res.status(200).json(games);
+    })
+  } catch (error) {
+    console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
+  }
+}
 const startGame = async (req, res) => {
   try {
     await Game.update(
@@ -102,6 +118,7 @@ const declareWinners = async (req, res) => {
 };
 
 module.exports = {
+  getAllPlayersForGame,
   getAllGames,
   startGame,
   endGame,

@@ -28,7 +28,7 @@ module.exports = (sequelize) => {
     completed: Sequelize.BOOLEAN
   }, {
     sequelize,
-    modelName: 'Event',
+    modelName: 'Events',
   });
   return Event;
 };

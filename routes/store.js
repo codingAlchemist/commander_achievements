@@ -9,7 +9,7 @@ app.get("/owner/:id", controller.getOwnerById);
 app.get("/owners", controller.getAllOwners);
 
 app.post("/create", controller.createStore);
-app.get("/stores/:owner", controller.getStoresByOwner);
+app.get("/:owner", controller.getStoresByOwner);
 app.put("/update", controller.updateStore);
 app.delete("/remove", controller.deleteStore)
 

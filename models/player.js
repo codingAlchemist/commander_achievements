@@ -32,9 +32,6 @@ Player.init({
     email:Sequelize.STRING,
     game_id: Sequelize.INTEGER,
     event_id: Sequelize.INTEGER,
-    achievement1: Sequelize.INTEGER,
-    achievement2: Sequelize.INTEGER,
-    achievement3: Sequelize.INTEGER,
     isEventApproved: Sequelize.BOOLEAN
   }, {
     sequelize,

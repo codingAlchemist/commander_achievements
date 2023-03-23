@@ -24,12 +24,12 @@ module.exports = (sequelize) => {
       allowNull: false,
       autoIncrement: true
     },
-    player: Sequelize.INTEGER,
-    achievement: Sequelize.INTEGER,
+    player_id: Sequelize.INTEGER,
+    achievement_id: Sequelize.INTEGER,
     completed: Sequelize.BOOLEAN
   }, {
     sequelize,
-    modelName: 'Player_Achievement',
+    modelName: 'Player_Achievements',
   });
   return Player_Achievement;
 };
