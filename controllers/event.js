@@ -19,7 +19,7 @@ const sequelize = new Sequelize({
 });
 const app = express();
 app.use(cookieParser());
-const Store = require('../models/store')(sequelize);
+const Venue = require('../models/venue')(sequelize);
 const Event = require('../models/event')(sequelize);
 
 const create =  async (req, res) => {
@@ -39,7 +39,7 @@ const create =  async (req, res) => {
           event_code = makeId(5);
         } 
         const event = Event.build({
-          store: req.body.store_number,
+          venue: req.body.venue_number,
           date: new Date(),
           completed: false,
           event_code: req.body.event_code
@@ -54,11 +54,11 @@ const create =  async (req, res) => {
   }
 }
 
-const getAllEventsByStore = async (req, res) => {
+const getAllEventsByVenue = async (req, res) => {
   try {
     await Event.findAll({
       where: {
-        store: req.params.store_number
+        venue: req.params.venue_number
       }
     }).then((events) => {
       res.status(200).json(events);
@@ -96,6 +96,6 @@ const makeId = (length) => {
 }
 module.exports = {
   create,
-  getAllEventsByStore,
+  getAllEventsByVenue,
   getAllEventsByCode
 }

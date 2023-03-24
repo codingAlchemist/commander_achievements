@@ -3,11 +3,11 @@ const {
   Model, Sequelize
 } = require('sequelize');
 
-const Store = require('./store');
+const Store = require('./venue');
 const Achievement = require('./achievement');
 
 module.exports = (sequelize) => {
-  class Store_Achievements extends Model {
+  class Venue_Achievements extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -17,12 +17,12 @@ module.exports = (sequelize) => {
       // define association here
     }
   }
-  Store_Achievements.init({
+  Venue_Achievements.init({
     store: Sequelize.INTEGER,
     achievement: Sequelize.INTEGER
   }, {
     sequelize,
-    modelName: 'Store_Achievements',
+    modelName: 'Venue_Achievements',
   });
-  return Store_Achievements;
+  return Venue_Achievements;
 };

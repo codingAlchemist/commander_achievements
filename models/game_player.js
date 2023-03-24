@@ -2,8 +2,6 @@
 const {
   Model, Sequelize
 } = require('sequelize');
-const Player = require('./player');
-const Game = require('./game');
 module.exports = (sequelize) => {
   class Game_Player extends Model {
     /**

@@ -192,9 +192,9 @@ const getAllPlayers = async (req, res) => {
 
 const getAllPlayersInEvent = async (req, res) => {
   try {
-    Event.hasMany(Player, { foreignKey: 'event_id'});
-    Player.belongsTo(Event, {foreignKey: 'event_id'});
-    await Event.findAll({
+    Event.hasMany(Player, {as: 'players', foreignKey: 'event_id'});
+    Player.belongsTo(Event, {as: 'players', foreignKey: 'event_id'});
+    await Event.findOne({
       where: {
         event_code: req.params.event_code
       },
