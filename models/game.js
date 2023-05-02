@@ -23,15 +23,16 @@ module.exports = (sequelize) => {
     },
     rounds: Sequelize.INTEGER,
     event_id: Sequelize.INTEGER,
-    time_ended: Sequelize.DATE,
-    time_started: Sequelize.DATE,
-    date_played: Sequelize.DATE,
-    game_code: Sequelize.STRING,
+    timeEnded: Sequelize.DATE,
+    timeStarted: Sequelize.DATE,
+    datePlayed: Sequelize.DATE,
+    gameCode: Sequelize.STRING,
     first: Sequelize.INTEGER,
     second: Sequelize.INTEGER,
     third: Sequelize.INTEGER,
     fourth: Sequelize.INTEGER,
-    looking_for_players: Sequelize.BOOLEAN
+    playerCount: Sequelize.INTEGER,
+    lookingForPlayers: Sequelize.BOOLEAN
   }, {
     sequelize,
     modelName: 'Games',

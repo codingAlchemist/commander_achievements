@@ -21,10 +21,12 @@ module.exports = (sequelize) => {
       allowNull: false,
       autoIncrement: true
     },
-    store: Sequelize.INTEGER,
-    event_code: Sequelize.STRING,
+    venue: Sequelize.INTEGER,
+    eventCode: Sequelize.STRING,
     date: Sequelize.DATE,
-    completed: Sequelize.BOOLEAN
+    completed: Sequelize.BOOLEAN,
+    rounds: Sequelize.INTEGER,
+    dateCompleted: Sequelize.DATE
   }, {
     sequelize,
     modelName: 'Events',

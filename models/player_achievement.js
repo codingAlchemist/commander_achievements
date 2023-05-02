@@ -1,7 +1,7 @@
 'use strict';
 
 const {
-  Model,Sequelize, DataTypes
+  Model, Sequelize, DataTypes
 } = require('sequelize');
 
 const Achievement = require('./achievement');
@@ -24,8 +24,8 @@ module.exports = (sequelize) => {
       allowNull: false,
       autoIncrement: true
     },
-    player_id: Sequelize.INTEGER,
-    achievement_id: Sequelize.INTEGER,
+    playerId: Sequelize.INTEGER,
+    achievementId: Sequelize.INTEGER,
     completed: Sequelize.BOOLEAN
   }, {
     sequelize,

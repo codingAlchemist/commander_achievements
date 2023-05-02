@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 
 app.post("/create", controller.create);
-app.get("/events/:venue_number", controller.getAllEventsByVenue);
-app.get("/events/:event_code", controller.getAllEventsByCode);
+app.put("/:eventCode/end", controller.endEvent);
+app.get("/", controller.getAllEventsByVenue); //?event_venue
+app.get("/:eventCode", controller.getEvent);
+
 module.exports = app;

@@ -1,11 +1,12 @@
 'use strict';
 
 const {
-  Model,Sequelize
+  Model, Sequelize
 } = require('sequelize');
+const Player_Achievement = require('./player_achievement');
 
 module.exports = (sequelize) => {
-  
+
   class Player extends Model {
     /**
      * Helper method for defining associations.
@@ -13,10 +14,10 @@ module.exports = (sequelize) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-     
+      // models.hasMany(Player_Achievement, {foreignKey: 'player_id'})
     }
   }
-Player.init({
+  Player.init({
     id: {
       type: Sequelize.INTEGER,
       primaryKey: true,
@@ -24,18 +25,21 @@ Player.init({
       autoIncrement: true
     },
     username: Sequelize.STRING,
-    password:Sequelize.STRING,
-    nickname: Sequelize.STRING,
-    desc:Sequelize.STRING,
+    password: Sequelize.STRING,
+    desc: Sequelize.STRING,
     level: Sequelize.INTEGER,
     points: Sequelize.INTEGER,
-    email:Sequelize.STRING,
+    email: Sequelize.STRING,
     game_id: Sequelize.INTEGER,
     event_id: Sequelize.INTEGER,
-    isEventApproved: Sequelize.BOOLEAN
+    isEventApproved: Sequelize.BOOLEAN,
+    isLookingForGame: Sequelize.BOOLEAN
   }, {
     sequelize,
     modelName: 'Players',
   });
+  // Player.associate = (models) => {
+  //   Player.hasMany(models.Player_Achievement, {foreignKey: 'player_id', as: 'achievements' });
+  // }
   return Player;
 };

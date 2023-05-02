@@ -1,7 +1,6 @@
 const express = require("express");
 const cookieParser = require('cookie-parser')
 const Sequelize = require("sequelize");
-const { Op } = require("sequelize");
 
 const sequelize = new Sequelize({
   database: process.env.DBNAME,
@@ -17,38 +16,35 @@ const sequelize = new Sequelize({
     },
   },
 });
+
 const app = express();
 app.use(cookieParser());
 const Venue = require('../models/venue')(sequelize);
 const Event = require('../models/event')(sequelize);
+const util = require('../misc/tools')
 
-const create =  async (req, res) => {
-  try{
-    await Event.findOne({
-      where:{
-        event_code: req.body.event_code
+const create = async (req, res) => {
+  try {
+    const current = await Event.findOne({
+      where: {
+        eventCode: req.body.eventCode
       }
     }).then((event) => {
       if (event != null) {
         console.log("event is not null")
-        res.json({"message":"Event code already in use."});
-      }else{
-        var event_code = req.body.event_code;
-
-        if (event_code == "" || event_code == null) {
-          event_code = makeId(5);
-        } 
+        res.json({ message: "Event code already in use." });
+      } else {
         const event = Event.build({
-          venue: req.body.venue_number,
+          venue: req.body.venue,
           date: new Date(),
           completed: false,
-          event_code: req.body.event_code
+          eventCode: req.body.eventCode
         });
         event.save();
         res.status(200).json(event);
       }
     })
-  }catch(error){
+  } catch (error) {
     console.error(error.stack);
     res.status(500).send({ error: "Something failed while trying to create event!" + error.message });
   }
@@ -56,46 +52,61 @@ const create =  async (req, res) => {
 
 const getAllEventsByVenue = async (req, res) => {
   try {
-    await Event.findAll({
+    if (!Venue.hasAlias('events')) {
+      Venue.hasMany(Event, { foreignKey: 'venue', as: 'events' })
+    }
+    if (!Event.hasAlias('events')) {
+      Event.belongsTo(Venue, { foreignKey: 'venue', as: 'events' })
+    }
+    await Venue.findOne({
       where: {
-        venue: req.params.venue_number
-      }
+        id: req.query.id
+      }, include: [{ model: Event, as: 'events' }]
     }).then((events) => {
       res.status(200).json(events);
     })
-  } catch(error) {
+  } catch (error) {
     console.error(error.stack);
     res.status(500).send({ error: "Something failed while trying to create event!" + error.message });
   }
 }
 
-const getAllEventsByCode = async (req, res) => {
+const endEvent = (req, res) => {
   try {
-    await Event.findAll({
+    Event.update({
+      dateCompleted: new Date(),
+      completed: true
+    }, {
       where: {
-        event_code: req.params.event_code
+        eventCode: req.params.eventCode
       }
-    }).then((events) => {
-      res.status(200).json(events);
     })
-  } catch(error) {
+    res.status(200).json({ message: "Event concluded" });
+  } catch (error) {
     console.error(error.stack);
     res.status(500).send({ error: "Something failed while trying to create event!" + error.message });
   }
 }
-const makeId = (length) => {
-    let result = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    const charactersLength = characters.length;
-    let counter = 0;
-    while (counter < length) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-      counter += 1;
-    }
-    return result;
+
+const getEvent = async (req, res) => {
+  try {
+    Event.findOne({
+      where: {
+        eventCode: req.params.eventCode
+      }
+    }).then((event) => {
+      res.status(200).json(event);
+    })
+  } catch (error) {
+    console.error(error.stack);
+    res.status(500).send({ error: "Something failed while trying to create event!" + error.message });
+  }
 }
+
+
 module.exports = {
   create,
   getAllEventsByVenue,
-  getAllEventsByCode
+  getEvent,
+  endEvent
 }
