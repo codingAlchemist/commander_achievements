@@ -18,6 +18,21 @@ const passport = require('passport');
  * Construct the sequelize object and init the params
  */
 //const sequelize = new Sequelize(process.env.REMOTE);
+
+//Start using the body parser for the json objects that will be used later
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(cors());
+app.use(function (request, response, next) {
+  response.header("Access-Control-Allow-Origin", "*");
+  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  response.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+  next();
+});
+//app.use(passport.initialize());
+//app.use(passport.session());
+
 const sequelize = new Sequelize({
   database: process.env.DBNAME,
   username: process.env.USERNAME,
@@ -41,26 +56,12 @@ const sequelize = new Sequelize({
     }
   },
 });
-//Start using the body parser for the json objects that will be used later
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(cors());
-app.use(function (request, response, next) {
-  response.header("Access-Control-Allow-Origin", "*");
-  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  response.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-  next();
-});
-//app.use(passport.initialize());
-//app.use(passport.session());
 
 //Routes
 sequelize
   .authenticate()
   .then(() => {
     console.log("Connection has been established successfully.");
-    sequelize.close();
   })
   .catch((err) => {
     console.error("Unable to connect to the database:", err);

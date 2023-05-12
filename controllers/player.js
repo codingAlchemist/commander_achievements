@@ -97,12 +97,16 @@ const getAchievement = async (req, res) => {
 
 const getPlayerAchievements = async (req, res) => {
   try {
-    Achievement.hasMany(Player_Achievement, { foreignKey: 'achievement_id', as: 'achievement' });
-    Player_Achievement.belongsTo(Achievement, { foreignKey: 'achievement_id', as: 'achievement' });
+    if (!Achievement.hasAlias('achievement')) {
+      Achievement.hasMany(Player_Achievement, { foreignKey: 'achievementId', as: 'achievement' });
+    }
+    if (!Player_Achievement.hasAlias('achievement')) {
+      Player_Achievement.belongsTo(Achievement, { foreignKey: 'achievementId', as: 'achievement' });
+    }
 
     Player_Achievement.findAll({
       where: {
-        player_id: req.params.id
+        playerId: req.params.id
       },
       attributes: {
         exclude: [
@@ -118,14 +122,14 @@ const getPlayerAchievements = async (req, res) => {
       res.status(200).json(result)
     })
   } catch (error) {
-    console.error(err.stack);
-    res.status(500).send({ error: `Something failed! ${err.message}` });
+    console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
   }
 }
 const assignPlayerAchievement = async (req, res) => {
   try {
-    Player.hasMany(Player_Achievement, { foreignKey: 'player_id' });
-    Player_Achievement.belongsTo(Player, { foreignKey: 'player_id' })
+    Player.hasMany(Player_Achievement, { foreignKey: 'playerId' });
+    Player_Achievement.belongsTo(Player, { foreignKey: 'playerId' })
 
     var achievements = [];
     await Achievement.findAll({
@@ -162,6 +166,7 @@ const assignPlayerAchievement = async (req, res) => {
 }
 const createPlayerAchievements = async (req, res) => {
   try {
+    var achievements = [];
     for (var i = 0; i < 3; i++) {
       await Achievement.findOne({
         order: sequelize.random()
@@ -170,8 +175,8 @@ const createPlayerAchievements = async (req, res) => {
           res.send("No achievements exist with that id or achievement not sent");
         } else {
           const player_achievement = Player_Achievement.build({
-            player_id: req.body.player,
-            achievement_id: result.id,
+            playerId: req.body.player,
+            achievementId: result.id,
             completed: false,
           });
           player_achievement.save();
@@ -180,8 +185,8 @@ const createPlayerAchievements = async (req, res) => {
       });
 
     }
-    Player.hasMany(Player_Achievement, { foreignKey: 'player_id' });
-    Player_Achievement.belongsTo(Player, { foreignKey: 'player_id' })
+    Player.hasMany(Player_Achievement, { foreignKey: 'playerId' });
+    Player_Achievement.belongsTo(Player, { foreignKey: 'playerId' })
     Player.findAll({
       where: {
         id: req.body.player

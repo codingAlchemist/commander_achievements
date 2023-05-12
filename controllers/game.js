@@ -1,5 +1,6 @@
-const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
+const Sequelize = require("sequelize");
+const util = require('../misc/tools');
 
 const sequelize = new Sequelize({
   database: process.env.DBNAME,
@@ -8,60 +9,71 @@ const sequelize = new Sequelize({
   host: process.env.HOST,
   port: process.env.PORT,
   dialect: "postgres",
+  pool: {
+    max: 1,
+    min: 0,
+    idle: 10000
+  },
+  retry: {
+    max: 5
+  },
+  logging: (msg) => { console.log(msg) },
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false, // <<<<<<< YOU NEED THIS
-    },
+      rejectUnauthorized: false // <<<<<<< YOU NEED THIS
+    }
   },
 });
 
 const Game = require("../models/game")(sequelize);
 const Game_Achievement = require("../models/game_achievement")(sequelize);
+const Player_Achievement = require('../models/player_achievement')(sequelize);
 const Achievement = require("../models/achievement")(sequelize);
 const Player = require("../models/player")(sequelize);
-const util = require('../misc/tools');
-const achievement = require("../models/achievement");
-
+var gameList = Array();
 // Game Start and Information Retrieval
 
-const getAllPlayersForGame = async (req, res) => {
+const getAllGamesAndPlayers = async (req, res) => {
   try {
-    Game.hasMany(Player, { foreignKey: "game_id" });
-    Player.belongsTo(Game, { foreignKey: "game_id" });
-
+    if (!Player.hasAlias('players')) {
+      Player.belongsTo(Game, { foreignKey: "game_id", as: 'players' });
+    }
+    if (!Game.hasAlias('players')) {
+      Game.hasMany(Player, { foreignKey: "game_id", as: 'players' });
+    }
     await Game.findAll({
       where: {
-        game_code: req.params.gameCode,
+        eventCode: req.params.eventCode,
       },
       attributes: {
         exclude: [
           "createdAt",
           "updatedAt",
           "rounds",
-          "gameCode",
           "timeStarted",
           "event_id",
         ],
       },
-      include: [Player],
+      include: { model: Player, as: 'players' },
     }).then((games) => {
       res.status(200).json(games);
-
     });
   } catch (error) {
     console.error(error.stack);
     res.status(500).send({ error: `Something failed! ${error.message}` });
   }
 };
-const getAllGames = (req, res) => {
+
+const getAllGames = async (req, res) => {
   try {
-    Game.findAll({
+    await Game.findAll({
       where: {
-        event_id: req.params.event_id
+        eventCode: req.params.eventCode
       }
     }).then((games) => {
       res.status(200).json(games);
+
     })
   } catch (error) {
     console.error(error.stack);
@@ -304,7 +316,7 @@ const groupPlayersIntoGame = async (req, res) => {
       if (!result) {
         res.send("No players looking for a game");
       }
-      if (result.length < 3) {
+      if (result.length < 4) {
         res.send("Need at least one more player to start a game")
       }
       result.forEach((item) => {
@@ -332,8 +344,14 @@ const groupPlayersIntoGame = async (req, res) => {
         })
       });
     })
-
-    Game.findOne({
+    await Game.update({
+      playerCount: 4,
+    }, {
+      where: {
+        id: game.id
+      }
+    });
+    await Game.findOne({
       where: {
         id: game.id
       },
@@ -385,7 +403,7 @@ const declareWinners = async (req, res) => {
 };
 
 module.exports = {
-  getAllPlayersForGame,
+  getAllGamesAndPlayers,
   getAllGames,
   getGameAndAchievements,
   createGame,

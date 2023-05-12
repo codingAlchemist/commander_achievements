@@ -23,6 +23,7 @@ module.exports = (sequelize) => {
     },
     rounds: Sequelize.INTEGER,
     event_id: Sequelize.INTEGER,
+    eventCode: Sequelize.STRING,
     timeEnded: Sequelize.DATE,
     timeStarted: Sequelize.DATE,
     datePlayed: Sequelize.DATE,
