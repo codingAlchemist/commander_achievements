@@ -21,6 +21,7 @@ module.exports = (sequelize) => {
       autoIncrement: true
     },
     username: Sequelize.STRING,
+    usernameCased: Sequelize.STRING,
     firstname: Sequelize.STRING,
     lastname: Sequelize.STRING,
     pass: Sequelize.STRING,

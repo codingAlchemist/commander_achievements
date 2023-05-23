@@ -58,8 +58,11 @@ const createAdminAccount = async (req, res) => {
         const password = req.body.pass;
         let hash = crypto.pbkdf2Sync(password, algorithm, 10, 8, `sha512`).toString(`hex`);
 
+        var usernameCased = req.body.username.toLowerCase();
+
         var admin = Venue_Admin.build({
             username: req.body.username,
+            usernameCased: usernameCased.replace(/\s+/g, ''),
             firstname: req.body.firstname,
             lastname: req.body.lastname,
             pass: hash,
@@ -90,9 +93,11 @@ const getAdminAccountById = async (req, res) => {
 }
 const login = (req, res) => {
     try {
+        var usernameCased = req.body.username.toLowerCase();
+        usernameCased.replace(/\s+/g, '');
         Venue_Admin.findOne({
             where: {
-                username: req.body.username,
+                usernameCased: usernameCased.replace(/\s+/g, ''),
                 pass: crypto.pbkdf2Sync(req.body.pass, algorithm, 10, 8, `sha512`).toString(`hex`)
             }
         }).then((result) => {

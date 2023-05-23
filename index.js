@@ -75,7 +75,7 @@ sequelize.sync().then((err) => {
   app.use("/events", require('./routes/event'));
   app.use("/", require('./routes/email'));
   app.use("/games", require('./routes/games'));
-
+  app.use("/push", require('./routes/push_notification'))
   app.get("/test", (req, res, next) => {
     res.send("Welcome to the commander achievements database!");
   });

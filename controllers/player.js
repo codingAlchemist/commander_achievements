@@ -2,6 +2,7 @@ const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const achievement = require("../models/achievement");
 const game = require("../models/game");
+const notification = require('../controllers/push_notification');
 const sequelize = new Sequelize({
   database: process.env.DBNAME,
   username: process.env.USERNAME,
@@ -22,7 +23,6 @@ const Player = require("../models/player")(sequelize);
 const Player_Achievement = require("../models/player_achievement")(sequelize);
 const Event = require("../models/event")(sequelize);
 const Game = require("../models/game")(sequelize);
-
 const create = async (req, res) => {
   try {
     const player = await Player.build({
@@ -335,6 +335,7 @@ const addPlayerToEvent = async (req, res) => {
                   },
                 }
               ).then((player) => {
+                notification.sendPlayerJoinedEventNotification(req, res)
                 res
                   .status(200)
                   .send({ message: `Player added to the event` }); //We found event and player add to event
