@@ -74,7 +74,7 @@ const getAllEventsByVenue = async (req, res) => {
 
 const endEvent = async (req, res) => {
   try {
-    var event = await Event.findOne({
+    await Event.findOne({
       where: {
         eventCode: req.params.eventCode
       }
@@ -92,7 +92,6 @@ const endEvent = async (req, res) => {
         }
       })
       res.status(200).json({ message: "Event concluded" });
-
     });
   } catch (error) {
     console.error(error.stack);
