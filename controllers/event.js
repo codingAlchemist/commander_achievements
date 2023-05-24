@@ -21,6 +21,7 @@ const app = express();
 app.use(cookieParser());
 const Venue = require('../models/venue')(sequelize);
 const Event = require('../models/event')(sequelize);
+const Completed_Event = require('../models/completed_events')(sequelize);
 const util = require('../misc/tools')
 
 const create = async (req, res) => {
@@ -71,17 +72,28 @@ const getAllEventsByVenue = async (req, res) => {
   }
 }
 
-const endEvent = (req, res) => {
+const endEvent = async (req, res) => {
   try {
-    Event.update({
-      dateCompleted: new Date(),
-      completed: true
-    }, {
+    var event = await Event.findOne({
       where: {
         eventCode: req.params.eventCode
       }
-    })
-    res.status(200).json({ message: "Event concluded" });
+    }).then((event) => {
+      const completed = Completed_Event.build({
+        eventCode: event.eventCode,
+        venue: event.venue,
+        date: event.date,
+        dateCompleted: new Date(),
+      });
+      completed.save();
+      Event.destroy({
+        where: {
+          id: event.id
+        }
+      })
+      res.status(200).json({ message: "Event concluded" });
+
+    });
   } catch (error) {
     console.error(error.stack);
     res.status(500).send({ error: "Something failed while trying to create event!" + error.message });
