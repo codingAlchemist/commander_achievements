@@ -2,20 +2,8 @@ const express = require("express");
 const cookieParser = require('cookie-parser')
 const Sequelize = require("sequelize");
 
-const sequelize = new Sequelize({
-  database: process.env.DBNAME,
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  host: process.env.HOST,
-  port: process.env.PORT,
-  dialect: "postgres",
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false, // <<<<<<< YOU NEED THIS
-    },
-  },
-});
+const sequelize = require("../models/sequelize_instance");
+
 
 const app = express();
 app.use(cookieParser());
@@ -26,7 +14,7 @@ const util = require('../misc/tools')
 
 const create = async (req, res) => {
   try {
-    const current = await Event.findOne({
+    await Event.findOne({
       where: {
         eventCode: req.body.eventCode
       }
@@ -39,7 +27,7 @@ const create = async (req, res) => {
           venue: req.body.venue,
           date: new Date(),
           completed: false,
-          eventCode: req.body.eventCode
+          eventCode: req.body.eventCode.replace(/\s/g, "")
         });
         event.save();
         res.status(200).json(event);

@@ -1,18 +1,4 @@
-const Sequelize = require("sequelize");
-const sequelize = new Sequelize({
-  database: process.env.DBNAME,
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  host: process.env.HOST,
-  port: process.env.PORT,
-  dialect: "postgres",
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false // <<<<<<< YOU NEED THIS
-    }
-  },
-});
+const sequelize = require("../models/sequelize_instance");
 
 const Achievement = require("../models/achievement")(sequelize);
 

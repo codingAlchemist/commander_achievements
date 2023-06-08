@@ -1,41 +1,28 @@
-const { Op } = require("sequelize");
-const Sequelize = require("sequelize");
+const sequelize = require("../models/sequelize_instance");
 const util = require('../misc/tools');
-
-const sequelize = new Sequelize({
-  database: process.env.DBNAME,
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  host: process.env.HOST,
-  port: process.env.PORT,
-  dialect: "postgres",
-  pool: {
-    max: 1,
-    min: 0,
-    idle: 10000
-  },
-  retry: {
-    max: 5
-  },
-  logging: (msg) => { console.log(msg) },
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false // <<<<<<< YOU NEED THIS
-    }
-  },
-});
-
 const Game = require("../models/game")(sequelize);
 const Game_Achievement = require("../models/game_achievement")(sequelize);
 const Player_Achievement = require('../models/player_achievement')(sequelize);
 const Achievement = require("../models/achievement")(sequelize);
 const Player = require("../models/player")(sequelize);
+const Event = require("../models/event")(sequelize);
 var gameList = Array();
 // Game Start and Information Retrieval
 
 const getAllGamesAndPlayers = async (req, res) => {
   try {
+    if (!Player.hasAlias('achievements')) {
+      Player.hasMany(Player_Achievement, { foreignKey: 'playerId', as: 'achievements' })
+    }
+    if (!Player_Achievement.hasAlias('achievements')) {
+      Player_Achievement.belongsTo(Player, { foreignKey: 'playerId', as: 'achievements' })
+    }
+    if (!Achievement.hasAlias('achievement')) {
+      Achievement.hasMany(Player_Achievement, { foreignKey: 'achievementId', as: 'achievement' });
+    }
+    if (!Player_Achievement.hasAlias('achievement')) {
+      Player_Achievement.belongsTo(Achievement, { foreignKey: 'achievementId', as: 'achievement' });
+    }
     if (!Player.hasAlias('players')) {
       Player.belongsTo(Game, { foreignKey: "game_id", as: 'players' });
     }
@@ -55,7 +42,15 @@ const getAllGamesAndPlayers = async (req, res) => {
           "event_id",
         ],
       },
-      include: { model: Player, as: 'players' },
+      include: {
+        model: Player, as: 'players',
+        include: {
+          model: Player_Achievement, as: 'achievements', attributes: ['completed'],
+          include: {
+            model: Achievement, as: 'achievement', attributes: ['name', 'desc', 'points']
+          }
+        }
+      },
     }).then((games) => {
       res.status(200).json(games);
     });
@@ -73,7 +68,6 @@ const getAllGames = async (req, res) => {
       }
     }).then((games) => {
       res.status(200).json(games);
-
     })
   } catch (error) {
     console.error(error.stack);
@@ -98,7 +92,7 @@ const getGameAndAchievements = (req, res) => {
     }
     Game.findOne({
       where: {
-        gameCode: req.params.gameCode
+        id: req.params.id
       },
       attributes: {
         exclude: [
@@ -156,7 +150,6 @@ const startGame = async (req, res) => {
 //Game Update
 const completeGameAchievement = (req, res) => {
   try {
-
     const player = Player.findOne({
       where: {
         id: req.params.player_id
@@ -279,10 +272,18 @@ const groupPlayersIntoGame = async (req, res) => {
 
     var playerArray = [];
     var achievements = [];
+    const event = await Event.findOne({
+      where: {
+        id: req.body.event_id
+      }
+    })
     // 1. create game
     const game = await Game.build({
+      timeEnded: null,
+      timeStarted: new Date(),
+      eventCode: event.eventCode,
       date_played: new Date(),
-      event_id: req.body.event_id,
+      event_id: event.id,
       gameCode: util.makeId(5),
       rounds: 1,
       first: null,
@@ -292,7 +293,8 @@ const groupPlayersIntoGame = async (req, res) => {
       playerCount: 0,
       lookingForPlayers: true
     });
-    await game.save()
+    await game.save();
+
 
     // 2. get 3 random achievements
     var achievements = [];
@@ -337,11 +339,13 @@ const groupPlayersIntoGame = async (req, res) => {
       }
     );
     achievements.forEach((item) => {
-      playerArray.forEach((id) => {
-        Player_Achievement.build({
+      playerArray.forEach(async (id) => {
+        const playerAchievement = await Player_Achievement.build({
           playerId: id,
-          achievementId: item
+          achievementId: item,
+          completed: false
         })
+        await playerAchievement.save();
       });
     })
     await Game.update({

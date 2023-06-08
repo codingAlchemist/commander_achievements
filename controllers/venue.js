@@ -5,22 +5,7 @@ const fileUpload = require("express-fileupload");
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const crypto = require('crypto');
-
-const sequelize = new Sequelize({
-    database: process.env.DBNAME,
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    host: process.env.HOST,
-    port: process.env.PORT,
-    dialect: "postgres",
-    dialectOptions: {
-        ssl: {
-            require: true,
-            rejectUnauthorized: false, // <<<<<<< YOU NEED THIS
-        },
-    },
-});
-
+const sequelize = require("../models/sequelize_instance");
 const Venue = require('../models/venue')(sequelize);
 const Venue_Admin = require("../models/venue_admin")(sequelize);
 const Event = require('../models/event')(sequelize);

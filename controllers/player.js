@@ -1,28 +1,15 @@
 const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
-const achievement = require("../models/achievement");
-const game = require("../models/game");
 const notification = require('../controllers/push_notification');
-const sequelize = new Sequelize({
-  database: process.env.DBNAME,
-  username: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  host: process.env.HOST,
-  port: process.env.PORT,
-  dialect: "postgres",
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false, // <<<<<<< YOU NEED THIS
-    },
-  },
-});
+const sequelize = require("../models/sequelize_instance");
+
 
 const Achievement = require("../models/achievement")(sequelize);
 const Player = require("../models/player")(sequelize);
 const Player_Achievement = require("../models/player_achievement")(sequelize);
 const Event = require("../models/event")(sequelize);
 const Game = require("../models/game")(sequelize);
+
 const create = async (req, res) => {
   try {
     const player = await Player.build({
