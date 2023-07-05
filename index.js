@@ -17,6 +17,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors());
+app.use('/image/', express.static(__dirname + '/assets'));
 app.use(function (request, response, next) {
   response.header("Access-Control-Allow-Origin", "*");
   response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -33,14 +34,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 sequelize.sync().then((err) => {
-  app.use("/achievements", require("./routes/achievement"));
-  app.use("/players", require("./routes/player"));
-  app.use("/venue", require('./routes/venue'));
-  app.use("/events", require('./routes/event'));
-  app.use("/", require('./routes/email'));
-  app.use("/games", require('./routes/games'));
-  app.use("/push", require('./routes/push_notification'))
-  app.get("/test", (req, res, next) => {
+  app.use("/api/achievements", require("./routes/achievement"));
+  app.use("/api/players", require("./routes/player"));
+  app.use("/api/venue", require('./routes/venue'));
+  app.use("/api/events", require('./routes/event'));
+  app.use("/api/", require('./routes/email'));
+  app.use("/api/games", require('./routes/games'));
+  app.use("/api/push", require('./routes/push_notification'))
+  app.get("/api/test", (req, res, next) => {
     res.send("Welcome to the commander achievements database!");
   });
 });

@@ -8,36 +8,6 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
-const notification_options = {
-    priority: "high",
-    timeToLive: 60 * 60 * 24
-};
-
-const vapidKeys = {
-    "publicKey": tools.VAPID_PUBLIC_KEY,
-    "privateKey": tools.VAPID_PRIVATE_KEY
-};
-
-const subscription = {
-    endpoint: "https://fcm.googleapis.com/fcm/send/eFNz2j6oyB4:APA91bHVDQfLXBu3nZv4ZfIoMByHaqja4pA5-QtK-85dI2-HlX49JhZJOxIo64MYYojCuSeNooLSCbEGOO7k3mijdAVvpIYhCcSs4UGLTyMFXY2K0NMQSw9T5XH0LjNqfuNeU2_wEnWY",
-    expirationTime: null,
-    keys: {
-        p256dh: "BIRhbarzShvOX6XuIZatPICZ10OjKfNrZF-npQwWRjKMFtsVPivloUqjTRLnxYyhzQy6rI3Jd3hhkz7JhJcKUoA",
-        auth: "d1QHA3D6N725fOcY2ptvVQ"
-    }
-}
-const parsedUrl = new URL(subscription.endpoint);
-const audience = `${parsedUrl.protocol}//${parsedUrl.hostname}`;
-
-const vapidHeaders = webPush.getVapidHeaders(
-    audience,
-    'mailto: jason.debottis@gmail.com',
-    vapidKeys.publicKey,
-    vapidKeys.privateKey,
-    'aes128gcm'
-);
-
-
 
 sendPlayerJoinedEventNotification = (req, res) => {
     const registrationToken = req.body.registrationToken;
@@ -49,7 +19,27 @@ sendPlayerJoinedEventNotification = (req, res) => {
     }
     admin.messaging().send(message)
         .then(response => {
-            //res.status(200).send("Notification sent");
+            res.status(200).send("Notification sent");
+            console.log(message)
+        }).catch(error => {
+            console.log(error);
+        });
+}
+
+sendGameCreated = (req, res) => {
+    const registrationToken = req.body.registrationToken;
+    const message = {
+        data: {
+            title: 'game created',
+            message: req.body.message,
+            game_id: req.body.game_id,
+            players: JSON.stringify(req.body.players)
+        },
+        token: registrationToken
+    }
+    admin.messaging().send(message)
+        .then(response => {
+            res.status(200).send("Notification sent");
             console.log(message)
         }).catch(error => {
             console.log(error);
@@ -58,10 +48,17 @@ sendPlayerJoinedEventNotification = (req, res) => {
 
 sendTestNotification = (req, res) => {
     const registrationToken = req.body.registrationToken;
+    const message_notification = {
+        notification: {
+            title: "Test notification",
+            body: req.body.message
+        }
+    }
     const message = {
         data: {
             title: req.body.title,
-            message: req.body.message
+            message: req.body.message,
+            test_value: req.body.test_value
         },
         token: registrationToken
     }
@@ -76,5 +73,6 @@ sendTestNotification = (req, res) => {
 }
 module.exports = {
     sendTestNotification,
-    sendPlayerJoinedEventNotification
+    sendPlayerJoinedEventNotification,
+    sendGameCreated
 }
