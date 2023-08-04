@@ -56,11 +56,15 @@ const getPlayer = async (req, res) => {
   try {
     await Player.findOne({
       where: {
-        username: req.body.username,
+        username: req.body.username.toLowerCase(),
         password: req.body.password,
       },
     }).then((player) => {
-      res.status(200).json(player);
+      if (player == null) {
+        res.status(200).json({ error: "Wrong user name or password" })
+      } else {
+        res.status(200).json(player);
+      }
     });
   } catch (err) {
     console.error(err.stack);
