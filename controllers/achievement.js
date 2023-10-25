@@ -1,6 +1,7 @@
 const sequelize = require("../models/sequelize_instance");
 
 const Achievement = require("../models/achievement")(sequelize);
+const Player_Achievement = require("../models/player_achievement")(sequelize);
 
 const getAllAchievements = async (req, res) => {
   try {
@@ -94,11 +95,26 @@ const updateAchievement = async (req, res) => {
   }
 }
 
-
+const completeAchievement = async (req, res) => {
+  Achievement.findOne({
+    where: {
+      id: req.params.id
+    }
+  }).then(async (achievement) => {
+    const player_achievement = await Player_Achievement.build({
+      playerId: req.body.player_id,
+      achievementId: req.params.id,
+      completed: true
+    });
+    await player_achievement.save();
+    res.status(200).json(player_achievement);
+  })
+}
 module.exports = {
   getAchievement,
   getAllAchievements,
   deleteAchievement,
   createAchievement,
-  updateAchievement
+  updateAchievement,
+  completeAchievement
 }

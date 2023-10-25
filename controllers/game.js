@@ -238,15 +238,25 @@ const createGameWithAchievements = async (req, res) => {
 
 const createGame = async (req, res) => {
   try {
-    const game = await Game.build({
+    const game = await Game.create({
       date_played: new Date(),
       event_id: req.body.event_id,
       gameCode: util.makeId(5),
       lookingForPlayers: true,
-      playerCount: 0,
+      playerCount: 1,
       rounds: 1,
+    }).then(async (created) => {
+      try {
+        await Player.update(
+          { game_id: created.id },
+          { where: { id: req.body.player_id } }
+        );
+      } catch (error) {
+        console.log(`Error updating: ${error}`)
+      }
+
     });
-    await game.save();
+    res.status(200).json(game)
     return game;
   } catch (error) {
     console.error(error.stack);

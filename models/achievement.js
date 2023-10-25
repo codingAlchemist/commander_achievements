@@ -25,7 +25,8 @@ module.exports = (sequelize) => {
     name: Sequelize.STRING,
     desc: Sequelize.STRING,
     points: Sequelize.INTEGER,
-    store: Sequelize.INTEGER
+    store: Sequelize.INTEGER,
+    reward: Sequelize.STRING
   }, {
     sequelize,
     modelName: 'Achievements',

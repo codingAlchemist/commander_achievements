@@ -2,6 +2,7 @@ const Sequelize = require("sequelize");
 const { Op } = require("sequelize");
 const notification = require('../controllers/push_notification');
 const sequelize = require("../models/sequelize_instance");
+const achievement = require("../models/achievement");
 
 
 const Achievement = require("../models/achievement")(sequelize);
@@ -88,9 +89,9 @@ const getAchievement = async (req, res) => {
 
 const getPlayerAchievements = async (req, res) => {
   try {
-    if (!Achievement.hasAlias('achievement')) {
-      Achievement.hasMany(Player_Achievement, { foreignKey: 'achievementId', as: 'achievement' });
-    }
+    // if (!Achievement.hasAlias('achievement')) {
+    //   Achievement.hasMany(Player_Achievement, { foreignKey: 'achievementId', as: 'achievement' });
+    // }
     if (!Player_Achievement.hasAlias('achievement')) {
       Player_Achievement.belongsTo(Achievement, { foreignKey: 'achievementId', as: 'achievement' });
     }
@@ -105,10 +106,9 @@ const getPlayerAchievements = async (req, res) => {
           "createdAt",
           "updatedAt",
           "playerId",
-          "achievementId"
         ],
       },
-      include: [{ model: Achievement, attributes: ['name', 'desc', 'points'], as: 'achievement' }]
+      include: [{ model: Achievement, attributes: ['name', 'desc', 'points', 'reward'], as: 'achievement' }]
     }).then((result) => {
       res.status(200).json(result)
     })
@@ -117,6 +117,7 @@ const getPlayerAchievements = async (req, res) => {
     res.status(500).send({ error: `Something failed! ${error.message}` });
   }
 }
+
 const assignPlayerAchievement = async (req, res) => {
   try {
     Player.hasMany(Player_Achievement, { foreignKey: 'playerId' });
@@ -244,6 +245,9 @@ const completeAchievement = async (req, res) => {
     res.status(500).send({ error: `Something failed! ${error.message}` });
   }
 };
+
+
+
 const getAllPlayers = async (req, res) => {
   try {
     var gameCode = req.query.gameCode;
