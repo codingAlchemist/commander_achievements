@@ -20,11 +20,11 @@ module.exports = (sequelize) => {
       allowNull: false,
       autoIncrement: true
     },
-    Token: Sequelize.STRING,
+    token: Sequelize.STRING,
     gameCode: Sequelize.STRING
   }, {
     sequelize,
-    modelName: 'Push_Token',
+    modelName: 'Push_Tokens',
   });
   return Push_Token;
 };

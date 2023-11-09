@@ -15,7 +15,7 @@ admin.initializeApp({
 const saveFCM = async (req, res) => {
     try {
         const push_token = await Push_Token.create({
-            Token: req.body.fcm,
+            token: req.body.fcm,
             gameCode: req.body.gameCode
         })
         res.status(200).json(push_token);
@@ -29,11 +29,11 @@ const getAllFCM = async (gameCode) => {
     try {
         await Push_Token.findAll({
             gameCode: gameCode
-        }).then((fcms) => {
-            return fcms
+        }).then((tokens) => {
+            return tokens
         });
     } catch (error) {
-        console.log("Error getting fcms", error)
+        console.log("Error getting tokens", error)
     }
 }
 sendPlayerJoinedEventNotification = (req, res) => {
@@ -103,23 +103,45 @@ sendTestNotification = (req, res) => {
 
 }
 
-const sendPlayerJoinedGame = (req, res) => {
+const sendPlayerJoinedGame = async (req, res) => {
     var player = req.body.player;
-    var tokens = getAllFCM(req.body.gameCode);
-    const message = {
-        data: {
-            title: `${player} joined`,
-            message: req.body.message
-        },
-        tokens: tokens
-    }
-    admin.messaging().sendMulticast(message).then((response) => {
+    var token = req.body.fcm;
+    Push_Token.update({
+        gameCode: req.body.gameCode
+    }, {
+        where: {
+            token: token
+        }
+    }).then(async (result) => {
+        await Push_Token.findAll({
+            gameCode: req.body.gameCode
+        }).then(async (tokens) => {
+            var list = []
+            tokens.forEach((token) => {
+                list.push(token.token)
+            })
+            res.status(200).json([...list].pop())
+            let current = [...list].pop()
+            const message = {
+                data: {
+                    title: `${player} joined`,
+                    message: req.body.message
+                },
+                tokens: [current]
+            }
+            admin.messaging().sendEachForMulticast(message).then((response) => {
+                console.log(response)
+                res.status(200).json({ result: "notification sent" })
+            })
+        });
 
     })
+
 }
 module.exports = {
     sendTestNotification,
     sendPlayerJoinedEventNotification,
     sendGameCreated,
+    sendPlayerJoinedGame,
     saveFCM
 }
