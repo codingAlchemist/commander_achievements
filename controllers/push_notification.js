@@ -1,14 +1,41 @@
 const { sendNotification } = require('web-push');
+const sequelize = require("../models/sequelize_instance");
 const tools = require('../misc/tools')
 const webPush = require('web-push');
 var admin = require("firebase-admin");
 var serviceAccount = require('../config/gameachievements-7d6e1-firebase-adminsdk-1tbbj-9d2fc89874.json');
+const { response } = require('express');
+const Push_Token = require('../models/push_token')(sequelize);
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
 
+const saveFCM = async (req, res) => {
+    try {
+        const push_token = await Push_Token.create({
+            Token: req.body.fcm,
+            gameCode: req.body.gameCode
+        })
+        res.status(200).json(push_token);
+    } catch (error) {
+        console.error("error", error);
+    }
+
+}
+
+const getAllFCM = async (gameCode) => {
+    try {
+        await Push_Token.findAll({
+            gameCode: gameCode
+        }).then((fcms) => {
+            return fcms
+        });
+    } catch (error) {
+        console.log("Error getting fcms", error)
+    }
+}
 sendPlayerJoinedEventNotification = (req, res) => {
     const registrationToken = req.body.registrationToken;
     const message = {
@@ -48,6 +75,10 @@ sendGameCreated = (req, res) => {
 
 sendTestNotification = (req, res) => {
     const registrationToken = req.body.registrationToken;
+    const notification_options = {
+        priority: "high",
+        timeToLive: 60 * 60 * 24
+    };
     const message_notification = {
         notification: {
             title: "Test notification",
@@ -71,8 +102,24 @@ sendTestNotification = (req, res) => {
         });
 
 }
+
+const sendPlayerJoinedGame = (req, res) => {
+    var player = req.body.player;
+    var tokens = getAllFCM(req.body.gameCode);
+    const message = {
+        data: {
+            title: `${player} joined`,
+            message: req.body.message
+        },
+        tokens: tokens
+    }
+    admin.messaging().sendMulticast(message).then((response) => {
+
+    })
+}
 module.exports = {
     sendTestNotification,
     sendPlayerJoinedEventNotification,
-    sendGameCreated
+    sendGameCreated,
+    saveFCM
 }

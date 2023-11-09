@@ -4,4 +4,5 @@ const app = express();
 
 app.post('/send', controller.sendTestNotification);
 app.post('/send_game_created', controller.sendGameCreated);
+app.post('/register/fcm', controller.saveFCM);
 module.exports = app;

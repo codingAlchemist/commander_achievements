@@ -255,8 +255,8 @@ const createGame = async (req, res) => {
         console.log(`Error updating: ${error}`)
       }
 
+      res.status(200).json(created)
     });
-    res.status(200).json(game)
     return game;
   } catch (error) {
     console.error(error.stack);
