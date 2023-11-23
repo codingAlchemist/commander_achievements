@@ -104,38 +104,26 @@ sendTestNotification = (req, res) => {
 }
 
 const sendPlayerJoinedGame = async (req, res) => {
-    var token = req.body.fcm;
-    Push_Token.update({
-        gameCode: req.body.gameCode
-    }, {
-        where: {
-            token: token
+    await Push_Token.findAll().then(async (result) => {
+        var list = []
+        result.forEach((token) => {
+            list.push(token.token)
+        })
+        let first = list[0];
+        let current = [...list].pop()
+        const message = {
+            data: {
+                title: `player joined`,
+                username: req.body.username,
+                level: req.body.level
+            },
+            topic: "Player joined game",
+            tokens: list
         }
-    }).then(async (result) => {
-        await Push_Token.findAll({
-            gameCode: req.body.gameCode
-        }).then(async (tokens) => {
-            var list = []
-            tokens.forEach((token) => {
-                list.push(token.token)
-            })
-            let current = [...list].pop()
-            const message = {
-                data: {
-                    title: `player joined`,
-                    username: req.body.username,
-                    level: req.body.level
-                },
-                tokens: [current]
-            }
-            admin.messaging().sendEachForMulticast(message).then((response) => {
-                console.log(response)
-            })
-            res.status(200).json([...list].pop())
-        });
-
+        admin.messaging().sendEachForMulticast(message).then((response) => {
+            console.log(response)
+        })
     })
-
 }
 module.exports = {
     sendTestNotification,

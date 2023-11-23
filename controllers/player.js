@@ -394,7 +394,7 @@ const removePlayerFromGame = async (req, res) => {
 const addPlayerToGame = async (req, res) => {
   try {
     const game = await Game.findOne({
-      where: { gameCode: req.params.game_code }
+      where: { gameCode: req.body.game_code }
     })
     Player.findOne({
       where: { id: req.body.id }
@@ -406,7 +406,7 @@ const addPlayerToGame = async (req, res) => {
           id: req.body.id
         }
       }).then((player) => {
-        pushController.sendPlayerJoinedGame(req, res)
+        pushController.sendPlayerJoinedGame(req, res, player.username, player.level)
         res.status(200).json({ message: "Player added to game" });
       })
     })

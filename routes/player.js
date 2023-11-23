@@ -7,7 +7,7 @@ app.post("/login", controller.getPlayer);
 
 app.put("/achievements/complete", controller.completeAchievement);
 app.put("/:id/event/add", controller.addPlayerToEvent);
-app.put('/:game_code/game/add', controller.addPlayerToGame);
+app.put('/game/add', controller.addPlayerToGame);
 app.put('/approve', controller.approvePlayerForEvent);
 app.put("/game/remove", controller.removePlayerFromGame)
 app.put("/achievements/create", controller.createPlayerAchievements)
