@@ -104,7 +104,6 @@ sendTestNotification = (req, res) => {
 }
 
 const sendPlayerJoinedGame = async (req, res) => {
-    var player = req.body.player;
     var token = req.body.fcm;
     Push_Token.update({
         gameCode: req.body.gameCode
@@ -120,19 +119,19 @@ const sendPlayerJoinedGame = async (req, res) => {
             tokens.forEach((token) => {
                 list.push(token.token)
             })
-            res.status(200).json([...list].pop())
             let current = [...list].pop()
             const message = {
                 data: {
-                    title: `${player} joined`,
-                    message: req.body.message
+                    title: `player joined`,
+                    username: req.body.username,
+                    level: req.body.level
                 },
                 tokens: [current]
             }
             admin.messaging().sendEachForMulticast(message).then((response) => {
                 console.log(response)
-                res.status(200).json({ result: "notification sent" })
             })
+            res.status(200).json([...list].pop())
         });
 
     })

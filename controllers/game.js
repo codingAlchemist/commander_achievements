@@ -60,6 +60,21 @@ const getAllGamesAndPlayers = async (req, res) => {
   }
 };
 
+const getGame = async (req, res) => {
+  try {
+    const game = Game.findOne({
+      where: {
+        id: req.params.id
+      }
+    }).then((game) => {
+      res.status(200).json(game);
+    })
+
+  } catch (error) {
+    console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
+  }
+}
 const getAllGames = async (req, res) => {
   try {
     await Game.findAll({
@@ -418,6 +433,7 @@ const declareWinners = async (req, res) => {
 
 module.exports = {
   getAllGamesAndPlayers,
+  getGame,
   getAllGames,
   getGameAndAchievements,
   createGame,

@@ -10,7 +10,7 @@ const Player = require("../models/player")(sequelize);
 const Player_Achievement = require("../models/player_achievement")(sequelize);
 const Event = require("../models/event")(sequelize);
 const Game = require("../models/game")(sequelize);
-
+const pushController = require("../controllers/push_notification");
 const create = async (req, res) => {
   try {
     const player = await Player.build({
@@ -394,7 +394,7 @@ const removePlayerFromGame = async (req, res) => {
 const addPlayerToGame = async (req, res) => {
   try {
     const game = await Game.findOne({
-      where: { gameCode: req.params.gameCode }
+      where: { gameCode: req.params.game_code }
     })
     Player.findOne({
       where: { id: req.body.id }
@@ -406,6 +406,7 @@ const addPlayerToGame = async (req, res) => {
           id: req.body.id
         }
       }).then((player) => {
+        pushController.sendPlayerJoinedGame(req, res)
         res.status(200).json({ message: "Player added to game" });
       })
     })

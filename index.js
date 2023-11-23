@@ -39,7 +39,7 @@ sequelize.sync().then((err) => {
   app.use("/api/venue", require('./routes/venue'));
   app.use("/api/events", require('./routes/event'));
   app.use("/api/", require('./routes/email'));
-  app.use("/api/games", require('./routes/games'));
+  app.use("/api/games", require('./routes/game'));
   app.use("/api/push", require('./routes/push_notification'))
   app.get("/api/test", (req, res, next) => {
     res.send("Welcome to the commander achievements database!");
