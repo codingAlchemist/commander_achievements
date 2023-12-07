@@ -400,7 +400,7 @@ const addPlayerToGame = async (req, res) => {
       where: { id: req.body.id }
     }).then((player) => {
       Player.update({
-        game_id: game.id
+        gameCode: game.gameCode
       }, {
         where: {
           id: req.body.id

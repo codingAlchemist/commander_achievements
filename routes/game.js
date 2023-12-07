@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const controller = require('../controllers/game');
 app.get("/:eventCode/players", controller.getAllGamesAndPlayers);
-app.get("/:id", controller.getGame);
+app.get("/:gameCode", controller.getGame);
 app.get("/:eventCode/games", controller.getAllGames);
 app.get("/:gameCode/game", controller.getGameAndAchievements);
 app.put("/:gameCode/end", controller.endGame);

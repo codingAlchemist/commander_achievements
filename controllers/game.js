@@ -62,9 +62,9 @@ const getAllGamesAndPlayers = async (req, res) => {
 
 const getGame = async (req, res) => {
   try {
-    const game = Game.findOne({
+    Game.findOne({
       where: {
-        id: req.params.id
+        gameCode: req.params.gameCode
       }
     }).then((game) => {
       res.status(200).json(game);
@@ -255,7 +255,7 @@ const createGame = async (req, res) => {
   try {
     const game = await Game.create({
       date_played: new Date(),
-      event_id: req.body.event_id,
+      eventCode: req.body.eventCode,
       gameCode: util.makeId(5),
       lookingForPlayers: true,
       playerCount: 1,

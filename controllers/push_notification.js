@@ -115,7 +115,8 @@ const sendPlayerJoinedGame = async (req, res) => {
             data: {
                 title: `player joined`,
                 username: req.body.username,
-                level: req.body.level
+                level: req.body.level,
+                gameCode: req.body.gameCode
             },
             topic: "Player joined game",
             tokens: list

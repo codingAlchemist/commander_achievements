@@ -30,7 +30,7 @@ module.exports = (sequelize) => {
     level: Sequelize.INTEGER,
     points: Sequelize.INTEGER,
     email: Sequelize.STRING,
-    game_id: Sequelize.INTEGER,
+    gameCode: Sequelize.STRING,
     event_id: Sequelize.INTEGER,
     isEventApproved: Sequelize.BOOLEAN,
     isLookingForGame: Sequelize.BOOLEAN
