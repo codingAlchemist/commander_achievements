@@ -13,6 +13,7 @@ const Achievement = require('../models/achievement')(sequelize);
 const achievementController = require('../controllers/achievement');
 const { response } = require('../routes/ability');
 const algorithm = 'aes-192-cbc';
+const Email = require("../controllers/email");
 
 const getAllAdminAccounts = async (req, res) => {
     try {
@@ -72,9 +73,9 @@ const forgotPassword = async (req, res) => {
         }).then((result) => {
             let method = req.body.method
             if (method == "password") {
-                res.json(result[0].pass);
+                Email.sendMailComposed(email, "Forgot Password", `Password: ${result[0].pass}`, res)
             } else if (method == "username") {
-                res.json(result[0].username);
+                Email.sendMailComposed(email, "Forgot Username", `Username: ${result[0].username}`, res)
             }
         })
 
