@@ -11,6 +11,7 @@ const Venue_Admin = require("../models/venue_admin")(sequelize);
 const Event = require('../models/event')(sequelize);
 const Achievement = require('../models/achievement')(sequelize);
 const achievementController = require('../controllers/achievement');
+const { response } = require('../routes/ability');
 const algorithm = 'aes-192-cbc';
 
 const getAllAdminAccounts = async (req, res) => {
@@ -50,7 +51,7 @@ const createAdminAccount = async (req, res) => {
             usernameCased: usernameCased.replace(/\s+/g, ''),
             firstname: req.body.firstname,
             lastname: req.body.lastname,
-            pass: hash,
+            pass: password,
             email: req.body.email,
             approved: 0
         });
@@ -61,7 +62,27 @@ const createAdminAccount = async (req, res) => {
         res.status(500).send({ error: `Something failed! ${error.message}` });
     }
 }
+const forgotPassword = async (req, res) => {
+    try {
+        var email = req.body.email.toLowerCase();
+        Venue_Admin.findAll({
+            where: {
+                email: email
+            }
+        }).then((result) => {
+            let method = req.body.method
+            if (method == "password") {
+                res.json(result[0].pass);
+            } else if (method == "username") {
+                res.json(result[0].username);
+            }
+        })
 
+    } catch (error) {
+        console.error(error.stack);
+        res.status(500).send({ error: `Something failed! ${error.message}` });
+    }
+}
 const getAdminAccountById = async (req, res) => {
     try {
         Venue_Admin.findOne({
@@ -83,7 +104,7 @@ const login = (req, res) => {
         Venue_Admin.findOne({
             where: {
                 usernameCased: usernameCased.replace(/\s+/g, ''),
-                pass: crypto.pbkdf2Sync(req.body.pass, algorithm, 10, 8, `sha512`).toString(`hex`)
+                pass: req.body.pass //crypto.pbkdf2Sync(req.body.pass, algorithm, 10, 8, `sha512`).toString(`hex`)
             }
         }).then((result) => {
             if (result == null) {
@@ -260,6 +281,7 @@ module.exports = {
     deleteVenue,
     getVenue,
     createVenueAchievement,
-    getAllStoreAchievements
+    getAllStoreAchievements,
+    forgotPassword
 }
 

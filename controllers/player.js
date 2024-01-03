@@ -394,7 +394,7 @@ const removePlayerFromGame = async (req, res) => {
 const addPlayerToGame = async (req, res) => {
   try {
     const game = await Game.findOne({
-      where: { gameCode: req.body.game_code }
+      where: { gameCode: req.body.gameCode }
     })
     Player.findOne({
       where: { id: req.body.id }

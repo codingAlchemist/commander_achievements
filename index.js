@@ -7,10 +7,7 @@ const cookieParser = require('cookie-parser')
 const cors = require("cors");
 const passport = require('passport');
 const sequelize = require('./models/sequelize_instance')
-/**
- * Construct the sequelize object and init the params
- */
-//const sequelize = new Sequelize(process.env.REMOTE);
+
 
 //Start using the body parser for the json objects that will be used later
 app.use(bodyParser.json());
@@ -41,6 +38,7 @@ sequelize.sync().then((err) => {
   app.use("/api/", require('./routes/email'));
   app.use("/api/games", require('./routes/game'));
   app.use("/api/push", require('./routes/push_notification'))
+  app.use("/api/abilities/", require("./routes/ability"));
   app.get("/api/test", (req, res, next) => {
     res.send("Welcome to the commander achievements database!");
   });

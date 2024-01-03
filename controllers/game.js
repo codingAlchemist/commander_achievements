@@ -263,7 +263,7 @@ const createGame = async (req, res) => {
     }).then(async (created) => {
       try {
         await Player.update(
-          { game_id: created.id },
+          { gameCode: created.gameCode },
           { where: { id: req.body.player_id } }
         );
       } catch (error) {

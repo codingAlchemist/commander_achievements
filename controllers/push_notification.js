@@ -25,6 +25,7 @@ const saveFCM = async (req, res) => {
 
 }
 
+
 const getAllFCM = async (gameCode) => {
     try {
         await Push_Token.findAll({
@@ -46,7 +47,7 @@ sendPlayerJoinedEventNotification = (req, res) => {
     }
     admin.messaging().send(message)
         .then(response => {
-            res.status(200).send("Notification sent");
+            res.status(200).send({ response: "Notification sent" });
             console.log(message)
         }).catch(error => {
             console.log(error);
@@ -65,12 +66,35 @@ sendGameCreated = (req, res) => {
         token: registrationToken
     }
     admin.messaging().send(message)
-        .then(response => {
-            res.status(200).send("Notification sent");
+        .then(_ => {
+            res.status(200).send({ response: "Notification sent" });
             console.log(message)
         }).catch(error => {
             console.log(error);
         });
+}
+
+const sendGameStarted = async (req, res) => {
+    try {
+        const registrationToken = req.body.registrationToken;
+        const message = {
+            data: {
+                title: 'game started',
+                gameCode: req.body.gameCode,
+                gameCreated: "true",
+            },
+            token: registrationToken
+        }
+        admin.messaging().send(message)
+            .then(_ => {
+                res.status(200).send("Notification sent");
+                console.log(message)
+            }).catch(error => {
+                console.log(error);
+            });
+    } catch (error) {
+        console.error("Error:", error)
+    }
 }
 
 sendTestNotification = (req, res) => {
@@ -115,6 +139,7 @@ const sendPlayerJoinedGame = async (req, res) => {
             data: {
                 title: `player joined`,
                 username: req.body.username,
+                id: req.body.id,
                 level: req.body.level,
                 gameCode: req.body.gameCode
             },
@@ -131,5 +156,6 @@ module.exports = {
     sendPlayerJoinedEventNotification,
     sendGameCreated,
     sendPlayerJoinedGame,
+    sendGameStarted,
     saveFCM
 }
