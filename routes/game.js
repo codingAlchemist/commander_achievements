@@ -12,5 +12,5 @@ app.put("/:gameCode/declare_winners/", controller.declareWinners);
 app.put("/:player_id/achievement_complete", controller.completeGameAchievement)
 app.post("/create", controller.createGame);
 app.post("/players/group", controller.groupPlayersIntoGame);
-
+app.delete("/delete", controller.deleteGame)
 module.exports = app;

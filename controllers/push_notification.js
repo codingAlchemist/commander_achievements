@@ -1,11 +1,13 @@
+var admin = require("firebase-admin");
+var serviceAccount = require('../config/gameachievements-7d6e1-firebase-adminsdk-1tbbj-9d2fc89874.json');
+
 const { sendNotification } = require('web-push');
 const sequelize = require("../models/sequelize_instance");
 const tools = require('../misc/tools')
 const webPush = require('web-push');
-var admin = require("firebase-admin");
-var serviceAccount = require('../config/gameachievements-7d6e1-firebase-adminsdk-1tbbj-9d2fc89874.json');
 const { response } = require('express');
 const Push_Token = require('../models/push_token')(sequelize);
+const playerController = require("../controllers/player");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
@@ -74,29 +76,6 @@ sendGameCreated = (req, res) => {
         });
 }
 
-const sendGameStarted = async (req, res) => {
-    try {
-        const registrationToken = req.body.registrationToken;
-        const message = {
-            data: {
-                title: 'game started',
-                gameCode: req.body.gameCode,
-                gameCreated: "true",
-            },
-            token: registrationToken
-        }
-        admin.messaging().send(message)
-            .then(_ => {
-                res.status(200).send("Notification sent");
-                console.log(message)
-            }).catch(error => {
-                console.log(error);
-            });
-    } catch (error) {
-        console.error("Error:", error)
-    }
-}
-
 sendTestNotification = (req, res) => {
     const registrationToken = req.body.registrationToken;
     const notification_options = {
@@ -133,8 +112,6 @@ const sendPlayerJoinedGame = async (req, res) => {
         result.forEach((token) => {
             list.push(token.token)
         })
-        let first = list[0];
-        let current = [...list].pop()
         const message = {
             data: {
                 title: `player joined`,
@@ -146,16 +123,61 @@ const sendPlayerJoinedGame = async (req, res) => {
             topic: "Player joined game",
             tokens: list
         }
+
         admin.messaging().sendEachForMulticast(message).then((response) => {
             console.log(response)
         })
     })
 }
+
+const sendGameStarted = async (req, res) => {
+    try {
+        await Push_Token.findAll().then(async (result) => {
+            result.forEach((token) => {
+                list.push(token.token)
+            })
+            const message = {
+                data: {
+                    title: 'game started',
+                    gameCode: req.body.gameCode,
+                },
+                topic: "Game Started",
+                tokens: list
+            }
+            admin.messaging().sendEachForMulticast(message).then((response) => {
+                console.log(response);
+            })
+        })
+    } catch (error) {
+        console.error("Error:", error)
+    }
+}
+
+const sendGameEnded = async (req, res) => {
+    await Push_Token.findAll().then(async (result) => {
+        result.forEach((token) => {
+            list.push(token.token)
+        })
+        const message = {
+            data: {
+                title: 'game ended',
+                gameCode: req.body.gameCode,
+            },
+            topic: "Game End",
+            tokens: list
+        }
+        admin.messaging().sendEachForMulticast(message).then((response) => {
+            console.log(response);
+        })
+    })
+}
+
 module.exports = {
     sendTestNotification,
     sendPlayerJoinedEventNotification,
     sendGameCreated,
     sendPlayerJoinedGame,
     sendGameStarted,
+    sendGameEnded,
     saveFCM
 }

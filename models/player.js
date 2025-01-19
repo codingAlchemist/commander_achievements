@@ -33,7 +33,8 @@ module.exports = (sequelize) => {
     gameCode: Sequelize.STRING,
     event_id: Sequelize.INTEGER,
     isEventApproved: Sequelize.BOOLEAN,
-    isLookingForGame: Sequelize.BOOLEAN
+    isLookingForGame: Sequelize.BOOLEAN,
+    token: Sequelize.STRING
   }, {
     sequelize,
     modelName: 'Players',

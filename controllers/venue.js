@@ -128,7 +128,7 @@ const update = async (req, res) => {
             username: req.body.username,
             firstname: req.body.firstname,
             lastname: req.body.lastname,
-            pass: hash,
+            pass: req.body.pass, // hash,
             approved: req.body.approved
         }, {
             where: {

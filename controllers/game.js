@@ -6,6 +6,7 @@ const Player_Achievement = require('../models/player_achievement')(sequelize);
 const Achievement = require("../models/achievement")(sequelize);
 const Player = require("../models/player")(sequelize);
 const Event = require("../models/event")(sequelize);
+const pushController = require("../controllers/push_notification");
 var gameList = Array();
 // Game Start and Information Retrieval
 
@@ -154,6 +155,7 @@ const startGame = async (req, res) => {
         },
       }
     ).then((game) => {
+      pushController.sendGameStarted(req, res)
       res.status(200).json({ message: "Game started" });
     });
   } catch (error) {
@@ -409,7 +411,8 @@ const endGame = (req, res) => {
         },
       }
     ).then((game) => {
-      res.status(200).json({ message: "Game started" });
+      pushController.sen
+      res.status(200).json({ message: "Game Ended" });
     });
   } catch (error) {
     console.error(error.stack);
@@ -431,6 +434,31 @@ const declareWinners = async (req, res) => {
   );
 };
 
+const deleteGame = async (req, res) => {
+  try {
+    var game = await Game.findOne({
+      where: {
+        gameCode: req.body.gameCode
+      }
+    })
+    if (game != null) {
+      await Game.destroy({
+        where: {
+          gameCode: req.body.gameCode
+        }
+      }).then((game) => {
+        res.status(200).send({ response: "Game successfully deleted" })
+      })
+    } else {
+      res.send({ response: "Game does not exist." })
+    }
+
+  } catch (error) {
+    console.error(error.stack);
+    res.status(500).send({ error: `Something failed! ${error.message}` });
+  }
+
+}
 module.exports = {
   getAllGamesAndPlayers,
   getGame,
@@ -442,5 +470,6 @@ module.exports = {
   declareWinners,
   createGameWithAchievements,
   groupPlayersIntoGame,
-  completeGameAchievement
+  completeGameAchievement,
+  deleteGame
 };

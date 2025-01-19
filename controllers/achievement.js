@@ -26,6 +26,20 @@ const getAllAchievements = async (req, res) => {
   }
 }
 
+const sendThreeRandomAchievements = async (req, res) => {
+  try {
+    await Achievement.findAll({
+      order: sequelize.random(),
+      limit: 3
+    }).then((result) => {
+      res.status(200).json(result)
+    })
+  } catch (error) {
+    console.error(err.stack);
+    res.status(500).send({ error: `Something failed! ${err.message}` });
+  }
+}
+
 const getAchievement = async (req, res) => {
   try {
     Achievement.findAll({ where: { id: req.params.id } }).then(
@@ -113,6 +127,7 @@ const completeAchievement = async (req, res) => {
 module.exports = {
   getAchievement,
   getAllAchievements,
+  sendThreeRandomAchievements,
   deleteAchievement,
   createAchievement,
   updateAchievement,

@@ -11,14 +11,17 @@ const Player_Achievement = require("../models/player_achievement")(sequelize);
 const Event = require("../models/event")(sequelize);
 const Game = require("../models/game")(sequelize);
 const pushController = require("../controllers/push_notification");
+const { response } = require("../routes/game");
+
 const create = async (req, res) => {
   try {
-    const player = await Player.build({
+    const player = await Player.create({
       username: req.body.username,
       email: req.body.email,
       level: req.body.level,
       points: req.body.points,
       password: req.body.password,
+      desc: req.body.desc
     });
     await Player.findOne({
       where: {
@@ -40,6 +43,7 @@ const create = async (req, res) => {
     res.status(500).send({ error: "Something failed!" });
   }
 };
+
 const getPlayerById = async (req, res) => {
   try {
     Player.findOne({
@@ -62,7 +66,7 @@ const getPlayer = async (req, res) => {
       },
     }).then((player) => {
       if (player == null) {
-        res.status(200).json({ error: "Wrong user name or password" })
+        res.status(403).json({ error: "Wrong user name or password" })
       } else {
         res.status(200).json(player);
       }
@@ -89,9 +93,6 @@ const getAchievement = async (req, res) => {
 
 const getPlayerAchievements = async (req, res) => {
   try {
-    // if (!Achievement.hasAlias('achievement')) {
-    //   Achievement.hasMany(Player_Achievement, { foreignKey: 'achievementId', as: 'achievement' });
-    // }
     if (!Player_Achievement.hasAlias('achievement')) {
       Player_Achievement.belongsTo(Achievement, { foreignKey: 'achievementId', as: 'achievement' });
     }
@@ -317,7 +318,7 @@ const addPlayerToEvent = async (req, res) => {
             if (event == null) {
               res
                 .status(200)
-                .send({ message: `Event with that code does exist` }); // Event doesnt exist
+                .send({ message: `Event with that code does exist` }); // Event doesn't exist
             } else {
               Player.update(
                 {
@@ -383,7 +384,7 @@ const removePlayerFromGame = async (req, res) => {
           where: { id: [player.id] }
         })
       })
-      res.status(200).json({ message: `Players removed from game successfully.` })
+      res.status(200).json({ response: `Players removed from game successfully.` })
     })
   } catch (error) {
     console.error(error.stack);
@@ -393,22 +394,28 @@ const removePlayerFromGame = async (req, res) => {
 
 const addPlayerToGame = async (req, res) => {
   try {
+    const id = parseInt(req.body.id)
     const game = await Game.findOne({
       where: { gameCode: req.body.gameCode }
     })
     Player.findOne({
-      where: { id: req.body.id }
+      where: { id: id }
     }).then((player) => {
-      Player.update({
-        gameCode: game.gameCode
-      }, {
-        where: {
-          id: req.body.id
-        }
-      }).then((player) => {
-        pushController.sendPlayerJoinedGame(req, res, player.username, player.level)
-        res.status(200).json({ message: "Player added to game" });
-      })
+      if (player != null) {
+        Player.update({
+          gameCode: game.gameCode,
+          token: req.body.token
+        }, {
+          where: {
+            id: id
+          }
+        }).then(() => {
+          res.status(200).json({ message: "Player added to game" });
+          pushController.sendPlayerJoinedGame(req, res)
+        })
+      } else {
+        res.status(200).json({ message: "Player not found" })
+      }
     })
 
   } catch (error) {

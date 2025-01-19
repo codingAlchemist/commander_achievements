@@ -7,4 +7,5 @@ app.post('/send_game_created', controller.sendGameCreated);
 app.post('/register/fcm', controller.saveFCM);
 app.post("/player/joined", controller.sendPlayerJoinedGame);
 app.post("/send_game_started", controller.sendGameStarted);
+app.post("/send_game_ended", controller.sendGameEnded);
 module.exports = app;
